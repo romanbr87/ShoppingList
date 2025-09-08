@@ -4,20 +4,26 @@ import { Container, Form, Button, Row, Col } from 'react-bootstrap';
 import { BsUpload, BsDownload } from 'react-icons/bs';
 import Header from '../components/Header';
 import EditableTable from '../components/EditableTable';
+import { mergeLists } from '../utils/listUtils';
 
 const EditPage = () => {
     const [shoppingList, setShoppingList] = useState({});
     const [newItem, setNewItem] = useState({ name: '', description: '' });
-    const fileInputRef = useRef(null);
+    const importFileRef = useRef(null);
+    const mergeFileRef = useRef(null);
 
-    const handleFileChange = (event) => {
+    const handleFileChange = (event, type) => {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
                     const parsedData = JSON.parse(e.target.result);
-                    setShoppingList(prevList => ({ ...prevList, ...parsedData }));
+                    if (type === 'import') {
+                        setShoppingList(parsedData); // Replace the entire list
+                    } else if (type === 'merge') {
+                        setShoppingList(prevList => mergeLists(prevList, parsedData)); // Merge with existing list
+                    }
                 } catch (error) {
                     alert("קובץ JSON לא תקין. אנא נסה שוב.");
                 }
@@ -27,9 +33,8 @@ const EditPage = () => {
         event.target.value = null;
     };
 
-    const handleImportClick = () => {
-        fileInputRef.current.click();
-    };
+    const handleImportClick = () => importFileRef.current.click();
+    const handleMergeClick = () => mergeFileRef.current.click();
 
     const handleAdd = (e) => {
         e.preventDefault();
@@ -70,22 +75,16 @@ const EditPage = () => {
                         <Button variant="outline-primary" onClick={handleImportClick} className="d-flex align-items-center">
                             ייבוא רשימה <BsUpload className="ms-2" />
                         </Button>
+                        <Button variant="outline-info" onClick={handleMergeClick} className="d-flex align-items-center">
+                            ייבוא ומיזוג <BsUpload className="ms-2" />
+                        </Button>
                     </div>
-                    <Form.Control
-                        type="file"
-                        ref={fileInputRef}
-                        onChange={handleFileChange}
-                        accept=".json"
-                        style={{ display: 'none' }}
-                    />
+                    <Form.Control type="file" ref={importFileRef} onChange={(e) => handleFileChange(e, 'import')} accept=".json" style={{ display: 'none' }} />
+                    <Form.Control type="file" ref={mergeFileRef} onChange={(e) => handleFileChange(e, 'merge')} accept=".json" style={{ display: 'none' }} />
                 </div>
 
                 {Object.keys(shoppingList).length > 0 ? (
-                    <EditableTable
-                        items={shoppingList}
-                        setList={setShoppingList}
-                        onDelete={handleDelete}
-                    />
+                    <EditableTable items={shoppingList} setList={setShoppingList} onDelete={handleDelete} />
                 ) : (
                     <div className="text-center mt-5 p-4 bg-light rounded-3 shadow-sm">
                         <h3 className="mb-3 text-secondary">אין פריטים להצגה</h3>
@@ -99,21 +98,10 @@ const EditPage = () => {
                 <Form onSubmit={handleAdd}>
                     <Row className="g-2">
                         <Col xs={12} md={5}>
-                            <Form.Control
-                                type="text"
-                                placeholder="שם המוצר"
-                                value={newItem.name}
-                                onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
-                                required
-                            />
+                            <Form.Control type="text" placeholder="שם המוצר" value={newItem.name} onChange={(e) => setNewItem({ ...newItem, name: e.target.value })} required />
                         </Col>
                         <Col xs={12} md={5}>
-                            <Form.Control
-                                type="text"
-                                placeholder="תיאור (אופציונלי)"
-                                value={newItem.description}
-                                onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
-                            />
+                            <Form.Control type="text" placeholder="תיאור (אופציונלי)" value={newItem.description} onChange={(e) => setNewItem({ ...newItem, description: e.target.value })} />
                         </Col>
                         <Col xs={12} md={2}>
                             <Button variant="success" type="submit" className="w-100">
