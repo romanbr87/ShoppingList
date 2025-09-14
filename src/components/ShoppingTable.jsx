@@ -1,26 +1,32 @@
 // components/ShoppingTable.js
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Table, Button, Form } from 'react-bootstrap';
-import { BsTrashFill, BsPencilFill, BsCheckLg, BsXLg, BsPlusLg } from 'react-icons/bs';
+import { BsTrashFill, BsPencilFill, BsCheckLg, BsXLg } from 'react-icons/bs';
 
 const ShoppingTable = ({ items, setList, onDelete }) => {
     const [editingItemId, setEditingItemId] = useState(null);
     const [editedItem, setEditedItem] = useState({ name: '', description: '' });
+    const [checkedItems, setCheckedItems] = useState({});
+    const dragItem = useRef(null);
+    const dragOverItem = useRef(null);
+
+    const handleDoubleClick = (id) => {
+        setCheckedItems(prevChecked => ({
+            ...prevChecked,
+            [id]: !prevChecked[id]
+        }));
+    };
 
     const handleEditClick = (item) => {
-        setEditingItemId(item.name);
+        setEditingItemId(item.id);
         setEditedItem({ name: item.name, description: item.description });
     };
 
-    const handleSaveClick = (originalName) => {
-        if (editedItem.name && editedItem.name !== originalName) {
-            const updatedList = { ...items };
-            delete updatedList[originalName];
-            updatedList[editedItem.name] = editedItem.description;
-            setList(updatedList);
-        } else {
-            setList(prevList => ({ ...prevList, [editedItem.name]: editedItem.description }));
-        }
+    const handleSaveClick = (id) => {
+        const updatedList = items.map(item =>
+            item.id === id ? { ...editedItem, id } : item
+        );
+        setList(updatedList);
         setEditingItemId(null);
     };
 
@@ -29,7 +35,22 @@ const ShoppingTable = ({ items, setList, onDelete }) => {
         setEditedItem({ name: '', description: '' });
     };
 
-    const itemsArray = Object.entries(items).map(([name, description]) => ({ name, description }));
+    const handleDragStart = (e, index) => {
+        dragItem.current = index;
+    };
+
+    const handleDragEnter = (e, index) => {
+        dragOverItem.current = index;
+    };
+
+    const handleDrop = () => {
+        const _list = [...items];
+        const draggedItemContent = _list.splice(dragItem.current, 1)[0];
+        _list.splice(dragOverItem.current, 0, draggedItemContent);
+        dragItem.current = null;
+        dragOverItem.current = null;
+        setList(_list);
+    };
 
     return (
         <div className="shadow-sm rounded-3 overflow-hidden">
@@ -43,26 +64,29 @@ const ShoppingTable = ({ items, setList, onDelete }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {itemsArray.map((item, index) => (
-                        <tr key={item.name}>
+                    {items.map((item, index) => (
+                        <tr
+                            key={item.id}
+                            draggable={!checkedItems[item.id]} // Disable drag when checked
+                            onDoubleClick={() => handleDoubleClick(item.id)}
+                            onDragStart={!checkedItems[item.id] ? (e) => handleDragStart(e, index) : null}
+                            onDragEnter={!checkedItems[item.id] ? (e) => handleDragEnter(e, index) : null}
+                            onDrop={!checkedItems[item.id] ? handleDrop : null}
+                            onDragOver={!checkedItems[item.id] ? (e) => e.preventDefault() : null}
+                            style={{
+                                cursor: checkedItems[item.id] ? 'not-allowed' : 'grab',
+                                textDecoration: checkedItems[item.id] ? 'line-through black' : 'none'
+                            }}
+                        >
                             <td className="text-center align-middle">{index + 1}</td>
                             
-                            {editingItemId === item.name ? (
+                            {editingItemId === item.id ? (
                                 <>
                                     <td className="align-middle">
-                                        <Form.Control
-                                            type="text"
-                                            value={editedItem.name}
-                                            onChange={(e) => setEditedItem({ ...editedItem, name: e.target.value })}
-                                            required
-                                        />
+                                        <Form.Control type="text" value={editedItem.name} onChange={(e) => setEditedItem({ ...editedItem, name: e.target.value })} required disabled={checkedItems[item.id]} />
                                     </td>
                                     <td className="align-middle">
-                                        <Form.Control
-                                            type="text"
-                                            value={editedItem.description}
-                                            onChange={(e) => setEditedItem({ ...editedItem, description: e.target.value })}
-                                        />
+                                        <Form.Control type="text" value={editedItem.description} onChange={(e) => setEditedItem({ ...editedItem, description: e.target.value })} disabled={checkedItems[item.id]} />
                                     </td>
                                 </>
                             ) : (
@@ -73,40 +97,16 @@ const ShoppingTable = ({ items, setList, onDelete }) => {
                             )}
                             
                             <td className="text-center align-middle">
-                                <div className="d-flex justify-content-center gap-2"> {/* Add flexbox and gap */}
-                                    {editingItemId === item.name ? (
+                                <div className="d-flex justify-content-center gap-2">
+                                    {editingItemId === item.id ? (
                                         <>
-                                            <Button
-                                                variant="success"
-                                                size="sm"
-                                                onClick={() => handleSaveClick(item.name)}
-                                            >
-                                                <BsCheckLg />
-                                            </Button>
-                                            <Button
-                                                variant="secondary"
-                                                size="sm"
-                                                onClick={handleCancelClick}
-                                            >
-                                                <BsXLg />
-                                            </Button>
+                                            <Button variant="success" size="sm" onClick={() => handleSaveClick(item.id)} disabled={checkedItems[item.id]}><BsCheckLg /></Button>
+                                            <Button variant="secondary" size="sm" onClick={handleCancelClick} disabled={checkedItems[item.id]}><BsXLg /></Button>
                                         </>
                                     ) : (
                                         <>
-                                            <Button
-                                                variant="warning"
-                                                size="sm"
-                                                onClick={() => handleEditClick(item)}
-                                            >
-                                                <BsPencilFill />
-                                            </Button>
-                                            <Button
-                                                variant="danger"
-                                                size="sm"
-                                                onClick={() => onDelete(item.name)}
-                                            >
-                                                <BsTrashFill />
-                                            </Button>
+                                            <Button variant="warning" size="sm" onClick={() => handleEditClick(item)} disabled={checkedItems[item.id]}><BsPencilFill /></Button>
+                                            <Button variant="danger" size="sm" onClick={() => onDelete(item.id)} disabled={checkedItems[item.id]}><BsTrashFill /></Button>
                                         </>
                                     )}
                                 </div>

@@ -1,14 +1,10 @@
 // pages/index.js
 import { Container, Jumbotron, Button } from 'react-bootstrap';
 import Link from 'next/link';
-import Header from '../components/Header';
-
-
 
 const Home = () => {
     return (
         <>
-            <Header />
             <Container className="text-center mt-5">
                 <div className="bg-light p-5 rounded-3">
                     <h1>ברוכים הבאים לרשימת הקניות שלכם! 🛍️</h1>

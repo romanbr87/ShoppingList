@@ -16,35 +16,19 @@ const EditableTable = ({ items, setList, onDelete }) => {
     };
 
     const handleDrop = () => {
-        const itemsArray = Object.entries(items).map(([name, description]) => ({ name, description }));
-        const _list = [...itemsArray];
+        const _list = [...items];
         const draggedItemContent = _list.splice(dragItem.current, 1)[0];
         _list.splice(dragOverItem.current, 0, draggedItemContent);
         dragItem.current = null;
         dragOverItem.current = null;
-
-        const reorderedObject = _list.reduce((obj, item) => {
-            obj[item.name] = item.description;
-            return obj;
-        }, {});
-
-        setList(reorderedObject);
+        setList(_list);
     };
 
-    const handleItemChange = (originalName, field, value) => {
-        const updatedList = { ...items };
-
-        if (field === 'name') {
-            const description = updatedList[originalName];
-            delete updatedList[originalName];
-            updatedList[value] = description;
-        } else {
-            updatedList[originalName] = value;
-        }
-        setList(updatedList);
+    const handleItemChange = (id, field, value) => {
+        setList(prevList => prevList.map(item =>
+            item.id === id ? { ...item, [field]: value } : item
+        ));
     };
-
-    const itemsArray = Object.entries(items).map(([name, description]) => ({ name, description }));
 
     return (
         <div className="shadow-sm rounded-3 overflow-hidden">
@@ -58,9 +42,9 @@ const EditableTable = ({ items, setList, onDelete }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {itemsArray.map((item, index) => (
+                    {items.map((item, index) => (
                         <tr
-                            key={item.name}
+                            key={item.id}
                             draggable
                             onDragStart={(e) => handleDragStart(e, index)}
                             onDragEnter={(e) => handleDragEnter(e, index)}
@@ -70,26 +54,13 @@ const EditableTable = ({ items, setList, onDelete }) => {
                         >
                             <td className="text-center align-middle">{index + 1}</td>
                             <td className="align-middle">
-                                <Form.Control
-                                    type="text"
-                                    value={item.name}
-                                    onChange={(e) => handleItemChange(item.name, 'name', e.target.value)}
-                                    required
-                                />
+                                <Form.Control type="text" value={item.name} onChange={(e) => handleItemChange(item.id, 'name', e.target.value)} required />
                             </td>
                             <td className="align-middle">
-                                <Form.Control
-                                    type="text"
-                                    value={item.description}
-                                    onChange={(e) => handleItemChange(item.name, 'description', e.target.value)}
-                                />
+                                <Form.Control type="text" value={item.description} onChange={(e) => handleItemChange(item.id, 'description', e.target.value)} />
                             </td>
                             <td className="text-center align-middle">
-                                <Button
-                                    variant="danger"
-                                    size="sm"
-                                    onClick={() => onDelete(item.name)}
-                                >
+                                <Button variant="danger" size="sm" onClick={() => onDelete(item.id)}>
                                     <BsTrashFill />
                                 </Button>
                             </td>
