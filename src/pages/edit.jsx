@@ -3,11 +3,13 @@ import { useState, useRef } from 'react';
 import { Container, Form, Button, Row, Col } from 'react-bootstrap';
 import { BsUpload, BsDownload } from 'react-icons/bs';
 import EditableTable from '../components/EditableTable';
+import ManualAddModal from '../components/ManualAddModal';
 import { mergeLists, convertObjectToList } from '../utils/listUtils';
 
 const EditPage = () => {
     const [shoppingList, setShoppingList] = useState([]);
     const [newItem, setNewItem] = useState({ name: '', description: '' });
+    const [showModal, setShowModal] = useState(false);
     const importFileRef = useRef(null);
     const mergeFileRef = useRef(null);
 
@@ -64,16 +66,26 @@ const EditPage = () => {
         downloadAnchorNode.remove();
     };
 
+    const handleAddManually = (newItems) => {
+        setShoppingList(prevList => mergeLists(prevList, newItems));
+    };
+
     return (
         <Container className="my-5">
             <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2 className="mb-0 text-primary">מצב עריכה</h2>
-                <div className="d-flex gap-2">
+                <div>
+                    <h2 className="mb-0 text-primary">מצב עריכה</h2>
+                    <h5 className="mb-0 text-muted">סה"כ פריטים: {shoppingList.length} 🛒</h5>
+                </div>
+                <div className="d-flex gap-2 flex-wrap justify-content-end">
                     {shoppingList.length > 0 && (
                         <Button variant="outline-success" onClick={handleDownload} className="d-flex align-items-center">
                             ייצוא <BsDownload className="ms-2" />
                         </Button>
                     )}
+                    <Button variant="outline-primary" onClick={() => setShowModal(true)} className="d-flex align-items-center">
+                        הוספה ידנית
+                    </Button>
                     <Button variant="outline-primary" onClick={handleImportClick} className="d-flex align-items-center">
                         ייבוא רשימה <BsUpload className="ms-2" />
                     </Button>
@@ -112,6 +124,7 @@ const EditPage = () => {
                     </Col>
                 </Row>
             </Form>
+            <ManualAddModal show={showModal} handleClose={() => setShowModal(false)} handleAddItems={handleAddManually} />
         </Container>
     );
 };
