@@ -53,13 +53,13 @@ const ShoppingTable = ({ items, setList, onDelete }) => {
     };
 
     return (
-        <div className="shadow-sm rounded-3 overflow-hidden">
-            <Table striped bordered hover responsive className="mb-0">
+        <div className="shadow-sm rounded-3 overflow-hidden table-responsive">
+            <Table striped bordered hover className="mb-0">
                 <thead className="bg-dark text-white">
                     <tr>
                         <th className="text-center">#</th>
-                        <th className="text-center">פריט</th>
-                        <th className="text-center">תיאור</th>
+                        <th>שם המוצר</th>
+                        <th>תיאור/כמות</th>
                         <th className="text-center">פעולות</th>
                     </tr>
                 </thead>
@@ -67,35 +67,39 @@ const ShoppingTable = ({ items, setList, onDelete }) => {
                     {items.map((item, index) => (
                         <tr
                             key={item.id}
-                            draggable={!checkedItems[item.id]} // Disable drag when checked
+                            draggable
+                            onDragStart={(e) => handleDragStart(e, index)}
+                            onDragEnter={(e) => handleDragEnter(e, index)}
+                            onDrop={handleDrop}
+                            onDragOver={(e) => e.preventDefault()}
                             onDoubleClick={() => handleDoubleClick(item.id)}
-                            onDragStart={!checkedItems[item.id] ? (e) => handleDragStart(e, index) : null}
-                            onDragEnter={!checkedItems[item.id] ? (e) => handleDragEnter(e, index) : null}
-                            onDrop={!checkedItems[item.id] ? handleDrop : null}
-                            onDragOver={!checkedItems[item.id] ? (e) => e.preventDefault() : null}
                             style={{
-                                cursor: checkedItems[item.id] ? 'not-allowed' : 'grab',
-                                textDecoration: checkedItems[item.id] ? 'line-through black' : 'none'
+                                cursor: 'grab',
+                                textDecoration: checkedItems[item.id] ? 'line-through' : 'none',
+                                color: checkedItems[item.id] ? 'grey' : 'inherit'
                             }}
                         >
                             <td className="text-center align-middle">{index + 1}</td>
-                            
                             {editingItemId === item.id ? (
                                 <>
                                     <td className="align-middle">
-                                        <Form.Control type="text" value={editedItem.name} onChange={(e) => setEditedItem({ ...editedItem, name: e.target.value })} required disabled={checkedItems[item.id]} />
+                                        <Form.Control type="text" value={editedItem.name} onChange={(e) => setEditedItem({ ...editedItem, name: e.target.value })} />
                                     </td>
                                     <td className="align-middle">
-                                        <Form.Control type="text" value={editedItem.description} onChange={(e) => setEditedItem({ ...editedItem, description: e.target.value })} disabled={checkedItems[item.id]} />
+                                        <Form.Control type="text" value={editedItem.description} onChange={(e) => setEditedItem({ ...editedItem, description: e.target.value })} />
                                     </td>
                                 </>
                             ) : (
                                 <>
-                                    <td className="align-middle">{item.name}</td>
-                                    <td className="align-middle">{item.description}</td>
+                                    <td className="align-middle">
+                                        {item.name}
+                                    </td>
+                                    <td className="align-middle">
+                                        {item.description}
+                                    </td>
                                 </>
                             )}
-                            
+
                             <td className="text-center align-middle">
                                 <div className="d-flex justify-content-center gap-2">
                                     {editingItemId === item.id ? (

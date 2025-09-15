@@ -31,14 +31,14 @@ const EditableTable = ({ items, setList, onDelete }) => {
     };
 
     return (
-        <div className="shadow-sm rounded-3 overflow-hidden">
-            <Table striped bordered hover responsive className="mb-0">
+        <div className="shadow-sm rounded-3 overflow-hidden table-responsive">
+            <Table striped bordered hover className="mb-0">
                 <thead className="bg-dark text-white">
                     <tr>
                         <th className="text-center">#</th>
-                        <th className="text-center">פריט</th>
-                        <th className="text-center">תיאור</th>
-                        <th className="text-center">פעולות</th>
+                        <th>שם המוצר</th>
+                        <th>תיאור/כמות</th>
+                        <th className="text-center">מחק</th>
                     </tr>
                 </thead>
                 <tbody>

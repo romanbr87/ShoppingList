@@ -72,12 +72,12 @@ const EditPage = () => {
 
     return (
         <Container className="my-5">
-            <div className="d-flex justify-content-between align-items-center mb-4">
+            <div className="d-flex flex-column flex-sm-row justify-content-between align-items-center mb-4">
                 <div>
                     <h2 className="mb-0 text-primary">מצב עריכה</h2>
-                    <h5 className="mb-0 text-muted">סה"כ פריטים: {shoppingList.length} 🛒</h5>
+                    <h5 className="mb-2 text-muted">סה"כ פריטים: {shoppingList.length} 🛒</h5>
                 </div>
-                <div className="d-flex gap-2 flex-wrap justify-content-end">
+                <div className="d-flex flex-wrap gap-2 justify-content-end mt-3 mt-sm-0">
                     {shoppingList.length > 0 && (
                         <Button variant="outline-success" onClick={handleDownload} className="d-flex align-items-center">
                             ייצוא <BsDownload className="ms-2" />
