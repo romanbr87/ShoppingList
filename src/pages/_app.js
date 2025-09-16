@@ -26,6 +26,7 @@ const App = ({ Component, pageProps }) => {
                 <meta name="author" content="Roman Braverman" />
                 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
                 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+                <meta name="google-site-verification" content="INZ1lPlJ4uJihxsPJiYcnm62efEwDySXzWSfo5iZfIQ" />                
                 
                 {/* Robots & Crawling */}
                 <meta name="robots" content="index, follow, noodp, noydir" />
