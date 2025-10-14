@@ -10,6 +10,22 @@ const ViewTable = ({ items, setList, onDelete }) => {
     const dragItem = useRef(null);
     const dragOverItem = useRef(null);
 
+    // Helper function to check for duplicates (Name AND Description)
+    const isDuplicate = (list, item, excludeId) => {
+        if (!item.name) return true;
+
+        const newItemKey = `${item.name.trim().toLowerCase()}-${item.description.trim().toLowerCase()}`;
+        
+        return list.some(existingItem => {
+            // Exclude the item currently being edited from the check
+            if (existingItem.id === excludeId) {
+                return false;
+            }
+            const existingKey = `${existingItem.name.trim().toLowerCase()}-${existingItem.description.trim().toLowerCase()}`;
+            return existingKey === newItemKey;
+        });
+    };
+
     const handleDoubleClick = (id) => {
         setCheckedItems(prevChecked => ({
             ...prevChecked,
@@ -23,6 +39,18 @@ const ViewTable = ({ items, setList, onDelete }) => {
     };
 
     const handleSaveClick = (id) => {
+        // 1. Check for blank name
+        if (!editedItem.name.trim()) {
+            alert("שם המוצר לא יכול להיות ריק.");
+            return;
+        }
+
+        // 2. Check for duplicate against the rest of the list
+        if (isDuplicate(items, editedItem, id)) {
+            alert("הפריט הקיים כבר ברשימה עם אותו שם ותיאור. לא ניתן לשמור כפילות.");
+            return;
+        }
+
         const updatedList = items.map(item =>
             item.id === id ? { ...editedItem, id } : item
         );
@@ -91,10 +119,10 @@ const ViewTable = ({ items, setList, onDelete }) => {
                                 </>
                             ) : (
                                 <>
-                                    <td className="align-middle">
+                                    <td className="align-middle" title={item.name}>
                                         {item.name}
                                     </td>
-                                    <td className="align-middle">
+                                    <td className="align-middle" title={item.description}>
                                         {item.description}
                                     </td>
                                 </>
@@ -104,7 +132,7 @@ const ViewTable = ({ items, setList, onDelete }) => {
                                 <div className="d-flex justify-content-center gap-2">
                                     {editingItemId === item.id ? (
                                         <>
-                                            <Button variant="success" size="sm" onClick={() => handleSaveClick(item.id)} disabled={checkedItems[item.id]}><BsCheckLg /></Button>
+                                            <Button variant="success" size="sm" onClick={() => handleSaveClick(item.id)} disabled={checkedItems[item.id] || !editedItem.name.trim()}><BsCheckLg /></Button>
                                             <Button variant="secondary" size="sm" onClick={handleCancelClick} disabled={checkedItems[item.id]}><BsXLg /></Button>
                                         </>
                                     ) : (

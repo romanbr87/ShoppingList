@@ -2,26 +2,38 @@
 
 /**
  * Merges a new shopping list with an existing one, avoiding duplicate items.
- * An item is considered a duplicate if its name and description are identical to an item already in the list.
+ * An item is considered a duplicate if its name and description are identical (case-insensitive and trimmed) to an item already in the list.
  * @param {Array} existingList The current shopping list (array of objects).
  * @param {Array} newList The new list to be merged (array of objects).
  * @returns {Array} The merged shopping list with unique items.
  */
 export const mergeLists = (existingList, newList) => {
-    // Create a Set to efficiently check for existing items
-    const existingItems = new Set(existingList.map(item => `${item.name}-${item.description}`));
+    // Helper to normalize item keys for case-insensitive/trim-safe comparison
+    const normalizeKey = (item) => {
+        if (!item || !item.name) return null;
+        return `${item.name.trim().toLowerCase()}-${item.description ? item.description.trim().toLowerCase() : ''}`;
+    };
+
+    // Create a Set of keys from the existing list for efficient lookup
+    const existingKeys = new Set(existingList.map(normalizeKey).filter(key => key !== null));
 
     const uniqueNewItems = newList.filter(newItem => {
-        // Create a unique key for the new item
-        const newItemKey = `${newItem.name}-${newItem.description}`;
-        // Check if the key already exists in the set
-        if (existingItems.has(newItemKey)) {
-            return false; // It's a duplicate, so don't include it
+        const newItemKey = normalizeKey(newItem);
+        
+        // Skip items with no name or items that are duplicates
+        if (newItemKey === null || existingKeys.has(newItemKey)) {
+            return false;
         } else {
-            existingItems.add(newItemKey); // Add the new item's key to the set
-            return true; // It's a unique item, so include it
+            // Add the new item's key to the set to prevent internal duplicates within the newList itself
+            existingKeys.add(newItemKey);
+            return true;
         }
-    });
+    }).map(item => ({
+        // Ensure name/description are trimmed and assign a unique ID
+        name: item.name.trim(),
+        description: item.description ? item.description.trim() : '',
+        id: Date.now() + Math.random(),
+    }));
 
     return [...existingList, ...uniqueNewItems];
 };

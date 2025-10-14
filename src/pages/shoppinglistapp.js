@@ -15,6 +15,18 @@ const ShoppingListPage = () => {
     const importFileRef = useRef(null);
     const mergeFileRef = useRef(null);
 
+    // Helper function for duplicate check (moved here for handleAdd, but mergeLists handles file logic)
+    const isDuplicate = (list, item) => {
+        if (!item.name.trim()) return true; 
+
+        const newItemKey = `${item.name.trim().toLowerCase()}-${item.description.trim().toLowerCase()}`;
+        
+        return list.some(existingItem => {
+            const existingKey = `${existingItem.name.trim().toLowerCase()}-${existingItem.description.trim().toLowerCase()}`;
+            return existingKey === newItemKey;
+        });
+    };
+
     const handleFileChange = (event, type) => {
         const file = event.target.files[0];
         if (file) {
@@ -30,14 +42,23 @@ const ShoppingListPage = () => {
                         alert("קובץ JSON לא תקין. אנא נסה שוב.");
                         return;
                     }
+                    
+                    // 1. Clean the imported data of its own internal duplicates before processing.
+                    // This ensures the file itself doesn't introduce duplicates.
+                    const uniqueImportedData = mergeLists([], parsedData);
+
                     if (type === 'import') {
-                        setShoppingList(parsedData);
+                        // 2. Import: Set the list to the *unique* imported data.
+                        setShoppingList(uniqueImportedData);
                         setLastFileName(fileName); // Set file name on successful import
                     } else if (type === 'merge') {
-                        setShoppingList(prevList => mergeLists(prevList, parsedData));
+                        // 2. Merge: Merge the *unique* imported data with the existing list.
+                        // mergeLists handles preventing duplicates between existingList and uniqueImportedData.
+                        setShoppingList(prevList => mergeLists(prevList, uniqueImportedData));
                         setLastFileName(prevName => (prevName ? `${prevName} + ${fileName}` : fileName)); // Update file name for merge
                     }
                 } catch (error) {
+                    // console.error(error); // Optional: for debugging
                     alert("קובץ JSON לא תקין. אנא נסה שוב.");
                 }
             };
@@ -51,8 +72,17 @@ const ShoppingListPage = () => {
 
     const handleAdd = (e) => {
         e.preventDefault();
-        if (newItem.name) {
-            setShoppingList(prevList => [...prevList, { ...newItem, id: Date.now() }]);
+        if (newItem.name.trim()) {
+            if (isDuplicate(shoppingList, newItem)) {
+                alert(`הפריט "${newItem.name.trim()}" עם התיאור "${newItem.description.trim()}" כבר קיים ברשימה.`);
+                return;
+            }
+            
+            setShoppingList(prevList => [...prevList, { 
+                name: newItem.name.trim(), 
+                description: newItem.description.trim(), 
+                id: Date.now() 
+            }]);
             setNewItem({ name: '', description: '' });
             setLastFileName(null); // Clear file name when manually adding, as the list is modified
         }
@@ -83,6 +113,7 @@ const ShoppingListPage = () => {
     };
 
     const handleAddManually = (newItems) => {
+        // mergeLists handles all duplicate checks
         setShoppingList(prevList => mergeLists(prevList, newItems));
         setLastFileName(null); // Clear file name when manually adding
     };
