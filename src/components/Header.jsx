@@ -1,17 +1,16 @@
 // components/Header.js
-import { useState, useRef } from 'react'; // Import useRef
+import { useState, useRef } from 'react'; 
 import { Navbar, Nav, Container, Modal, Button } from 'react-bootstrap';
 import Link from 'next/link';
 
 const Header = () => {
     const [showAboutModal, setShowAboutModal] = useState(false);
-    // 1. Create a ref for the Navbar.Collapse
     const collapseRef = useRef(null); 
 
     const handleShow = () => setShowAboutModal(true);
     const handleClose = () => setShowAboutModal(false);
 
-    // 2. Function to close the menu programmatically
+    // Function to close the menu programmatically
     const closeMenu = () => {
         // Check if the menu is currently expanded (has the 'show' class)
         if (collapseRef.current && collapseRef.current.classList.contains('show')) {
@@ -26,22 +25,21 @@ const Header = () => {
     return (
         <Navbar bg="dark" variant="dark" expand="lg" sticky="top">
             <Container>
-                {/* 3. Call closeMenu when the Brand is clicked */}
+                {/* Brand link to Home */}
                 <Navbar.Brand as={Link} href="/" onClick={closeMenu}>
                     רשימת קניות 🛒
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                {/* 4. Attach the ref to Navbar.Collapse */}
+                {/* Attach the ref to Navbar.Collapse */}
                 <Navbar.Collapse id="basic-navbar-nav" ref={collapseRef}> 
                     <Nav className="me-auto">
-                        {/* 5. Call closeMenu when Nav.Links are clicked */}
-                        <Nav.Link as={Link} href="/edit" onClick={closeMenu}>
-                            מצב עריכה ✍️
+                        
+                        {/* UNIFIED LIST PAGE LINK */}
+                        <Nav.Link as={Link} href="/shoppinglistapp" onClick={closeMenu}>
+                            ניהול רשימה 📝
                         </Nav.Link>
-                        <Nav.Link as={Link} href="/view" onClick={closeMenu}>
-                            מצב צפייה 👀
-                        </Nav.Link>
-                        {/* 6. Call handleShow, and then closeMenu */}
+                        
+                        {/* About Modal Link */}
                         <Nav.Link onClick={() => { handleShow(); closeMenu(); }}>
                             אודות
                         </Nav.Link>
