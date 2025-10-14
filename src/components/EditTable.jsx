@@ -1,9 +1,9 @@
-// components/EditableTable.js
+// components/EditTable.js
 import { useState, useRef } from 'react';
 import { Table, Button, Form } from 'react-bootstrap';
 import { BsTrashFill } from 'react-icons/bs';
 
-const EditableTable = ({ items, setList, onDelete }) => {
+const EditTable = ({ items, setList, onDelete }) => {
     const dragItem = useRef(null);
     const dragOverItem = useRef(null);
 
@@ -72,4 +72,4 @@ const EditableTable = ({ items, setList, onDelete }) => {
     );
 };
 
-export default EditableTable;
+export default EditTable;

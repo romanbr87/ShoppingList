@@ -1,9 +1,9 @@
-// components/ShoppingTable.js
+// components/ViewTable.js
 import { useState, useRef } from 'react';
 import { Table, Button, Form } from 'react-bootstrap';
 import { BsTrashFill, BsPencilFill, BsCheckLg, BsXLg } from 'react-icons/bs';
 
-const ShoppingTable = ({ items, setList, onDelete }) => {
+const ViewTable = ({ items, setList, onDelete }) => {
     const [editingItemId, setEditingItemId] = useState(null);
     const [editedItem, setEditedItem] = useState({ name: '', description: '' });
     const [checkedItems, setCheckedItems] = useState({});
@@ -123,4 +123,4 @@ const ShoppingTable = ({ items, setList, onDelete }) => {
     );
 };
 
-export default ShoppingTable;
+export default ViewTable;
