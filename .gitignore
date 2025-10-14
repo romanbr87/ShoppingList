@@ -45,3 +45,4 @@ install.bat
 newStart.bat
 npmrundev.bat
 Node.js command prompt.lnk
+data/
