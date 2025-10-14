@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { Container, Form, Button, Row, Col } from 'react-bootstrap';
-import ShoppingTable from '../components/ShoppingTable';
-import EditableTable from '../components/EditableTable';
+import ViewTable from '../components/ViewTable';
+import EditTable from '../components/EditTable';
 import ManualAddModal from '../components/ManualAddModal';
 import { BsUpload, BsDownload, BsTrash } from 'react-icons/bs'; // Import BsTrash for the clear button
 import { mergeLists, convertObjectToList } from '../utils/listUtils';
@@ -134,9 +134,9 @@ const ShoppingListPage = () => {
 
             {shoppingList.length > 0 ? (
                 isEditing ? (
-                    <EditableTable items={shoppingList} setList={setShoppingList} onDelete={handleDelete} />
+                    <EditTable items={shoppingList} setList={setShoppingList} onDelete={handleDelete} />
                 ) : (
-                    <ShoppingTable items={shoppingList} setList={setShoppingList} onDelete={handleDelete} />
+                    <ViewTable items={shoppingList} setList={setShoppingList} onDelete={handleDelete} />
                 )
             ) : (
                 <div className="text-center mt-5 p-4 bg-light rounded-3 shadow-sm">
