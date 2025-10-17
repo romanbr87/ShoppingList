@@ -25,9 +25,9 @@ const App = ({ Component, pageProps }) => {
                 <meta name="keywords" content={keywords} />
                 <meta name="author" content="Roman Braverman" />
                 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-                <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-                <meta name="google-site-verification" content="INZ1lPlJ4uJihxsPJiYcnm62efEwDySXzWSfo5iZfIQ" />                
-                
+                <meta httpEquiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+                <meta name="google-site-verification" content="INZ1lPlJ4uJihxsPJiYcnm62efEwDySXzWSfo5iZfIQ" />
+
                 {/* Robots & Crawling */}
                 <meta name="robots" content="index, follow, noodp, noydir" />
                 <meta name="googlebot" content="index, follow, noodp, noydir" />
@@ -37,7 +37,7 @@ const App = ({ Component, pageProps }) => {
                 {/* Canonical URL */}
                 <link rel="canonical" href={websiteUrl} />
                 <meta name="application-url" content={websiteUrl} />
-                
+
                 {/* Open Graph Tags (for Facebook, WhatsApp, etc.) */}
                 <meta property="og:title" content={title} />
                 <meta property="og:description" content={description} />
@@ -66,7 +66,7 @@ const App = ({ Component, pageProps }) => {
                 <meta name="theme-color" content="#FFFFFF" />
                 <link rel="manifest" href="/manifest.json" />
                 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-                
+
                 {/* Icons & Favicons */}
                 <link rel="icon" href="/favicon.ico" />
                 <link rel="shortcut icon" href="/favicon.ico" />
