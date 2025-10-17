@@ -8,7 +8,6 @@ import EditTableBody from './EditTableBody';
 const ShoppingListTable = ({ items, setList, onDelete, newItem, setNewItem, handleAdd, isEditing }) => {
     const dragItem = useRef(null);
     const dragOverItem = useRef(null);
-    const colSpanCount = 4; // Number of columns in the table (Count, Name, Description, Actions)
 
     const handleDragStart = (e, index) => {
         dragItem.current = index;
@@ -50,24 +49,29 @@ const ShoppingListTable = ({ items, setList, onDelete, newItem, setNewItem, hand
         handleDragEnter,
         handleDrop,
         isDuplicate,
-    };
+        };
 
     return (
         <div className="shadow-sm rounded-3 overflow-hidden table-responsive">
             <Table striped bordered hover className="mb-0">
                 <thead className="bg-dark text-white">
-                    <tr>
-                        <th className="text-center">#</th>
-                        <th>שם המוצר</th>
-                        <th>תיאור/כמות</th>
-                        <th className="text-center">{isEditing ? 'מחק' : 'פעולות'}</th>
-                    </tr>
-                    {items.length === 0 &&
-                        // Renders the message inside the tbody, spanning all columns
+                    {items.length > 0 ?
                         <tr>
-                            <td colSpan={colSpanCount} className="text-center py-4 bg-light text-muted">
-                                <h4>אין פריטים להצגה 😥</h4>
-                                <p className="mb-0">התחל על ידי הוספת פריטים למטה או ייבוא רשימה.</p>
+                            <th className="text-center">#</th>
+                            <th>שם המוצר</th>
+                            <th>תיאור/כמות</th>
+                            <th className="text-center">{isEditing ? 'מחק' : 'פעולות'}</th>
+                        </tr>
+                        :
+                        <tr className='text-center mt-5 p-4 bg-light rounded-3 shadow-sm'>
+
+                            <td colSpan={5}>
+                                {/* <h4>אין פריטים להצגה 😥</h4>
+                                <p className="mb-0">התחל על ידי הוספת פריטים למטה או ייבוא רשימה.</p> */}
+
+                                <h3 className="mb-3 text-secondary">אין פריטים להצגה</h3>
+                                <p className="lead text-muted">התחל על ידי הוספת פריטים למטה או ייבוא רשימה.</p>
+
                             </td>
                         </tr>
                     }
@@ -79,19 +83,11 @@ const ShoppingListTable = ({ items, setList, onDelete, newItem, setNewItem, hand
                     <ViewTableBody {...commonProps} />
                 )}
 
-                {/* Only show the AddItemForm footer if there are items OR if the list is empty 
-                   AND we are not showing the full empty message block above.
-                   Since the check is now inside the table, we'll unconditionally render the footer 
-                   if the list is NOT empty. If the list is empty, the logic below still works: */}
-                {items.length > 0 && (
-                    <tfoot>
-                        <AddItemForm newItem={newItem} setNewItem={setNewItem} handleAdd={handleAdd} isInTable={true} />
-                    </tfoot>
-                )}
+                <tfoot>
+                    <AddItemForm newItem={newItem} setNewItem={setNewItem} handleAdd={handleAdd} isInTable={true} />
+                </tfoot>
 
             </Table>
-            {/* If the list is empty, the AddItemForm needs to be rendered outside the table if 
-                we want to keep it visible below the message. Let's handle this in shoppinglistapp.js */}
         </div>
     );
 };
