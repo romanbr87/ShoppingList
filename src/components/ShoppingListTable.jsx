@@ -49,7 +49,7 @@ const ShoppingListTable = ({ items, setList, onDelete, newItem, setNewItem, hand
         handleDragEnter,
         handleDrop,
         isDuplicate,
-        };
+    };
 
     return (
         <div className="shadow-sm rounded-3 overflow-hidden table-responsive">
@@ -63,30 +63,26 @@ const ShoppingListTable = ({ items, setList, onDelete, newItem, setNewItem, hand
                             <th className="text-center">{isEditing ? 'מחק' : 'פעולות'}</th>
                         </tr>
                         :
-                        <tr className='text-center mt-5 p-4 bg-light rounded-3 shadow-sm'>
-
-                            <td colSpan={5}>
-                                {/* <h4>אין פריטים להצגה 😥</h4>
-                                <p className="mb-0">התחל על ידי הוספת פריטים למטה או ייבוא רשימה.</p> */}
-
+                        <tr className="text-center">
+                            <td colSpan={100} className="p-4 bg-light shadow-sm my-3">
                                 <h3 className="mb-3 text-secondary">אין פריטים להצגה</h3>
-                                <p className="lead text-muted">התחל על ידי הוספת פריטים למטה או ייבוא רשימה.</p>
-
+                                <p className="lead text-muted mb-0">התחל על ידי הוספת פריטים למטה או ייבוא רשימה.</p>
                             </td>
                         </tr>
                     }
                 </thead>
 
-                {isEditing ? (
-                    <EditTableBody {...commonProps} />
-                ) : (
-                    <ViewTableBody {...commonProps} />
-                )}
+                {items.length > 0 && <tbody>
+                    {isEditing ? (
+                        <EditTableBody {...commonProps} />
+                    ) : (
+                        <ViewTableBody {...commonProps} />
+                    )}
+                </tbody>}
 
                 <tfoot>
                     <AddItemForm newItem={newItem} setNewItem={setNewItem} handleAdd={handleAdd} isInTable={true} />
                 </tfoot>
-
             </Table>
         </div>
     );
