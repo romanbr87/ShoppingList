@@ -57,7 +57,7 @@ const ShoppingListTable = ({ items, setList, onDelete, newItem, setNewItem, hand
                 <thead className="bg-dark text-white">
                     {items.length > 0 ?
                         <tr>
-                            <th className="text-center">#</th>
+                            <th className="text-center" style={{ width: '75px', maxWidth: '75px' }}>#</th>
                             <th>שם המוצר</th>
                             <th>תיאור/כמות</th>
                             <th className="text-center">{isEditing ? 'מחק' : 'פעולות'}</th>
