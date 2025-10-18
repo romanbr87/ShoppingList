@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { Container, Form, Button, Row, Col } from 'react-bootstrap';
 // Updated Import: Use the single combined table component
-import ShoppingListTable from '../components/ShoppingListTable'; 
+import ShoppingListTable from '../components/ShoppingListTable';
 import AddItemForm from '../components/AddItemForm';
 import ManualAddModal from '../components/ManualAddModal';
 import { BsUpload, BsDownload, BsTrash } from 'react-icons/bs';
@@ -12,15 +12,16 @@ const ShoppingListPage = () => {
     const [newItem, setNewItem] = useState({ name: '', description: '' });
     const [showModal, setShowModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
-    const [lastFileName, setLastFileName] = useState(null);
+    const [lastFileName, setLastFileName] = useState(null); // New state for file name
     const importFileRef = useRef(null);
     const mergeFileRef = useRef(null);
 
+    // Helper function for duplicate check (moved here for handleAdd, but mergeLists handles file logic)
     const isDuplicate = (list, item) => {
-        if (!item.name.trim()) return true; 
+        if (!item.name.trim()) return true;
 
         const newItemKey = `${item.name.trim().toLowerCase()}-${item.description.trim().toLowerCase()}`;
-        
+
         return list.some(existingItem => {
             const existingKey = `${existingItem.name.trim().toLowerCase()}-${existingItem.description.trim().toLowerCase()}`;
             return existingKey === newItemKey;
@@ -30,7 +31,7 @@ const ShoppingListPage = () => {
     const handleFileChange = (event, type) => {
         const file = event.target.files[0];
         if (file) {
-            const fileName = file.name;
+            const fileName = file.name; // Get file name
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
@@ -42,17 +43,23 @@ const ShoppingListPage = () => {
                         alert("קובץ JSON לא תקין. אנא נסה שוב.");
                         return;
                     }
-                    
+
+                    // 1. Clean the imported data of its own internal duplicates before processing.
+                    // This ensures the file itself doesn't introduce duplicates.
                     const uniqueImportedData = mergeLists([], parsedData);
 
                     if (type === 'import') {
+                        // 2. Import: Set the list to the *unique* imported data.
                         setShoppingList(uniqueImportedData);
-                        setLastFileName(fileName);
+                        setLastFileName(fileName); // Set file name on successful import
                     } else if (type === 'merge') {
+                        // 2. Merge: Merge the *unique* imported data with the existing list.
+                        // mergeLists handles preventing duplicates between existingList and uniqueImportedData.
                         setShoppingList(prevList => mergeLists(prevList, uniqueImportedData));
-                        setLastFileName(prevName => (prevName ? `${prevName} + ${fileName}` : fileName));
+                        setLastFileName(prevName => (prevName ? `${prevName} + ${fileName}` : fileName)); // Update file name for merge
                     }
                 } catch (error) {
+                    // console.error(error); // Optional: for debugging
                     alert("קובץ JSON לא תקין. אנא נסה שוב.");
                 }
             };
@@ -71,20 +78,20 @@ const ShoppingListPage = () => {
                 alert(`הפריט "${newItem.name.trim()}" עם התיאור "${newItem.description.trim()}" כבר קיים ברשימה.`);
                 return;
             }
-            
-            setShoppingList(prevList => [...prevList, { 
-                name: newItem.name.trim(), 
-                description: newItem.description.trim(), 
-                id: Date.now() 
+
+            setShoppingList(prevList => [...prevList, {
+                name: newItem.name.trim(),
+                description: newItem.description.trim(),
+                id: Date.now()
             }]);
             setNewItem({ name: '', description: '' });
-            setLastFileName(null);
+            setLastFileName(null); // Clear file name when manually adding, as the list is modified
         }
     };
 
     const handleDelete = (id) => {
         setShoppingList(prevList => prevList.filter(item => item.id !== id));
-        setLastFileName(null);
+        setLastFileName(null); // Clear file name when manually deleting
     };
 
     const handleDownload = () => {
@@ -96,10 +103,10 @@ const ShoppingListPage = () => {
         document.body.appendChild(downloadAnchorNode);
         downloadAnchorNode.click();
         downloadAnchorNode.remove();
-        setLastFileName(fileName);
+        setLastFileName(fileName); // Set file name when downloaded
     };
 
-    const handleClearList = () => {
+    const handleClearList = () => { // New function to clear the list
         if (window.confirm("האם אתה בטוח שברצונך למחוק את כל הפריטים מהרשימה?")) {
             setShoppingList([]);
             setLastFileName(null);
@@ -107,22 +114,9 @@ const ShoppingListPage = () => {
     };
 
     const handleAddManually = (newItems) => {
+        // mergeLists handles all duplicate checks
         setShoppingList(prevList => mergeLists(prevList, newItems));
-        setLastFileName(null);
-    };
-
-    const addItemFormProps = {
-        newItem, 
-        setNewItem, 
-        handleAdd
-    };
-
-    const tableProps = {
-        items: shoppingList, 
-        setList: setShoppingList, 
-        onDelete: handleDelete, 
-        isEditing,
-        ...addItemFormProps
+        setLastFileName(null); // Clear file name when manually adding
     };
 
     return (
@@ -131,7 +125,7 @@ const ShoppingListPage = () => {
                 <div>
                     <h2 className="mb-0 text-primary">{isEditing ? 'מצב עריכה' : 'רשימת קניות'}</h2>
                     <h5 className="mb-2 text-muted">סה"כ פריטים: {shoppingList.length} 🛒</h5>
-                    {lastFileName && (
+                    {lastFileName && ( // Display file name if available
                         <p className="text-secondary small mb-0">
                             קובץ אחרון: <strong>{lastFileName}</strong>
                         </p>
@@ -162,7 +156,7 @@ const ShoppingListPage = () => {
                     <Button variant="outline-primary" onClick={handleImportClick} className="d-flex align-items-center">
                         ייבוא רשימה <BsUpload className="ms-2" />
                     </Button>
-                    {shoppingList.length > 0 && ( 
+                    {shoppingList.length > 0 && (
                         <Button variant="outline-info" onClick={handleMergeClick} className="d-flex align-items-center">
                             ייבוא ומיזוג <BsUpload className="ms-2" />
                         </Button>
@@ -172,19 +166,17 @@ const ShoppingListPage = () => {
                 <Form.Control type="file" ref={mergeFileRef} onChange={(e) => handleFileChange(e, 'merge')} accept=".json" style={{ display: 'none' }} />
             </div>
 
-            <ShoppingListTable {...tableProps} />
-            {/* {shoppingList.length > 0 ? (
-                // Use the new combined component
-            ) : (
-                <div className="text-center mt-5 p-4 bg-light rounded-3 shadow-sm">
-                    <h3 className="mb-3 text-secondary">אין פריטים להצגה</h3>
-                    <p className="lead text-muted">התחל על ידי הוספת פריטים למטה או ייבוא רשימה.</p>
-                    <AddItemForm {...addItemFormProps} isInTable={false} />
-                </div>
-            )} */}
-            
-
+            <ShoppingListTable
+                items={shoppingList}
+                setList={setShoppingList}
+                onDelete={handleDelete}
+                newItem={newItem}
+                setNewItem={setNewItem}
+                handleAdd={handleAdd}
+                isEditing={isEditing}
+            />
             <ManualAddModal show={showModal} handleClose={() => setShowModal(false)} handleAddItems={handleAddManually} />
+
         </Container>
     );
 };
