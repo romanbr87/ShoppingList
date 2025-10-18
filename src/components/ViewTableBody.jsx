@@ -1,5 +1,6 @@
 // components/ViewTableBody.jsx
-import { useState } from 'react';
+
+import React, { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { BsTrashFill, BsPencilFill, BsCheckLg, BsXLg } from 'react-icons/bs';
 
@@ -44,7 +45,7 @@ const ViewTableBody = ({ items, setList, onDelete, handleDragStart, handleDragEn
     };
 
     return (
-        <tbody>
+        <React.Fragment>
             {items.map((item, index) => (
                 <tr
                     key={item.id}
@@ -98,7 +99,7 @@ const ViewTableBody = ({ items, setList, onDelete, handleDragStart, handleDragEn
                     </td>
                 </tr>
             ))}
-        </tbody>
+        </React.Fragment>
     );
 };
 

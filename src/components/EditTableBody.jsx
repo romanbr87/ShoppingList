@@ -1,4 +1,5 @@
 // components/EditTableBody.jsx
+import React from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { BsTrashFill } from 'react-icons/bs';
 
@@ -31,7 +32,7 @@ const EditTableBody = ({ items, setList, onDelete, handleDragStart, handleDragEn
     };
 
     return (
-        <tbody>
+        <React.Fragment>
             {items.map((item, index) => (
                 <tr
                     key={item.id}
@@ -65,7 +66,7 @@ const EditTableBody = ({ items, setList, onDelete, handleDragStart, handleDragEn
                     </td>
                 </tr>
             ))}
-        </tbody>
+        </React.Fragment>
     );
 };
 
