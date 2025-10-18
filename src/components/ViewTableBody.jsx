@@ -53,7 +53,11 @@ const ViewTableBody = ({ items, setList, onDelete, handleDragStart, handleDragEn
                     onDragEnter={(e) => handleDragEnter(e, index)}
                     onDrop={handleDrop}
                     onDragOver={(e) => e.preventDefault()}
-                    onDoubleClick={() => handleDoubleClick(item.id)}
+                    onDoubleClick={() => {
+                        if (editingItemId !== item.id) {
+                            handleDoubleClick(item.id);
+                        }
+                    }}
                     style={{
                         cursor: 'grab',
                         textDecoration: checkedItems[item.id] ? 'line-through' : 'none',
