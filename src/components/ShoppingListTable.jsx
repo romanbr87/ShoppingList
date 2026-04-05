@@ -2,8 +2,7 @@
 import { useRef } from 'react';
 import { Table } from 'react-bootstrap';
 import AddItemForm from './AddItemForm';
-import ViewTableBody from './ViewTableBody';
-import EditTableBody from './EditTableBody';
+import TableBody from './TableBody';
 
 const ShoppingListTable = ({ items, setList, onDelete, newItem, setNewItem, handleAdd, isEditing }) => {
     const dragItem = useRef(null);
@@ -26,7 +25,6 @@ const ShoppingListTable = ({ items, setList, onDelete, newItem, setNewItem, hand
         setList(_list);
     };
 
-    // Helper function to check for duplicates (Name AND Description)
     const isDuplicate = (list, item, excludeId) => {
         if (!item.name || !item.name.trim()) return true;
 
@@ -41,21 +39,13 @@ const ShoppingListTable = ({ items, setList, onDelete, newItem, setNewItem, hand
         });
     };
 
-    const commonProps = {
-        items,
-        setList,
-        onDelete,
-        handleDragStart,
-        handleDragEnter,
-        handleDrop,
-        isDuplicate,
-    };
+    const hasItems = items.length > 0;
 
     return (
-        <div className="shadow-sm rounded-3 overflow-hidden table-responsive">
+        <div className="shadow-sm rounded-3 overflow-hidden table-responsive mb-4">
             <Table striped bordered hover className="mb-0">
                 <thead className="bg-dark text-white">
-                    {items.length > 0 ?
+                    {hasItems ?
                         <tr>
                             <th className="text-center" style={{ width: '75px', maxWidth: '75px' }}>#</th>
                             <th>שם המוצר</th>
@@ -63,25 +53,37 @@ const ShoppingListTable = ({ items, setList, onDelete, newItem, setNewItem, hand
                             <th className="text-center">{isEditing ? 'מחק' : 'פעולות'}</th>
                         </tr>
                         :
-                        <tr className="text-center">
-                            <td colSpan={100} className="p-4 bg-light shadow-sm my-3">
-                                <h3 className="mb-3 text-secondary">אין פריטים להצגה</h3>
-                                <p className="lead text-muted mb-0">התחל על ידי הוספת פריטים למטה או ייבוא רשימה.</p>
+                        <tr className="text-center p-0 border-0"> 
+                            <td colSpan={100} className="p-0 border-0">
+                                <div className="p-4">
+                                    <h3 className="mb-3 text-secondary">אין פריטים להצגה</h3>
+                                    <p className="lead text-muted mb-0">התחל על ידי הוספת פריטים למטה או ייבוא רשימה.</p>
+                                </div>
                             </td>
                         </tr>
                     }
                 </thead>
 
-                {items.length > 0 && <tbody>
-                    {isEditing ? (
-                        <EditTableBody {...commonProps} />
-                    ) : (
-                        <ViewTableBody {...commonProps} />
-                    )}
+                {hasItems && <tbody>
+                    <TableBody
+                        items={items}
+                        setList={setList}
+                        onDelete={onDelete}
+                        handleDragStart={handleDragStart}
+                        handleDragEnter={handleDragEnter}
+                        handleDrop={handleDrop}
+                        isDuplicate={isDuplicate}
+                        isEditing={isEditing}
+                    />
                 </tbody>}
 
-                <tfoot>
-                    <AddItemForm newItem={newItem} setNewItem={setNewItem} handleAdd={handleAdd} isInTable={true} />
+                <tfoot className="bg-dark text-white">
+                    <AddItemForm 
+                        newItem={newItem} 
+                        setNewItem={setNewItem} 
+                        handleAdd={handleAdd}
+                        hasItems={hasItems}
+                    />
                 </tfoot>
             </Table>
         </div>
