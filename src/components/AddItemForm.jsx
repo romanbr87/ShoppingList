@@ -1,55 +1,54 @@
-// components/AddItemForm.jsx
 import React from 'react';
-import { Form, Button, Row, Col } from 'react-bootstrap';
+import { Form, Button } from 'react-bootstrap';
 
-const AddItemForm = ({ newItem, setNewItem, handleAdd, isInTable = false }) => {
-    const formContent = (
-        <Row className="g-2">
-            <Col xs={12} md={5}>
-                <Form.Control
-                    type="text"
-                    placeholder="שם המוצר" // Item Name
-                    // FIX: Use optional chaining for safe access
-                    value={newItem?.name || ''}
-                    onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
-                    required
-                />
-            </Col>
+const AddItemForm = ({ newItem, setNewItem, handleAdd, hasItems }) => {
 
-            <Col xs={12} md={5}>
-                <Form.Control
-                    type="text"
-                    placeholder="תיאור (אופציונלי)" // Description (optional)
-                    // FIX: Use optional chaining for safe access
-                    value={newItem?.description || ''}
-                    onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
-                />
-            </Col>
-
-            <Col xs={12} md={2}>
-                <Button variant="success" type="submit" className="w-100">
-                    הוסף {/* Add */}
-                </Button>
-            </Col>
-        </Row>
+    const renderFormControl = (field, placeholder, isRequired) => (
+        <Form.Control
+            type="text"
+            placeholder={placeholder}
+            value={newItem?.[field] || ''}
+            onChange={(e) => setNewItem({ ...newItem, [field]: e.target.value })}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAdd(e);
+                }
+            }}
+            required={isRequired}
+        />
     );
 
-    if (isInTable) {
-        return (
-            <tr>
-                <td colSpan={100} className="p-4 bg-light shadow-sm my-3">
-                    <Form onSubmit={handleAdd}>
-                        {formContent}
-                    </Form>
-                </td>
-            </tr>
-        );
-    }
+    const nameCellColSpan = hasItems ? 1 : 2;
+    // When no items, remove the top border from the tr
+    const rowClass = hasItems ? 'bg-light' : 'bg-light border-top-0';
+    
+    // Use border-0 and border-top-0 for the cells in the 'no items' case to remove internal and top separation
+    const cellBorderClass = hasItems ? '' : 'border-0 border-top-0'; 
 
     return (
-        <Form onSubmit={handleAdd}>
-            {formContent}
-        </Form>
+        <tr className={`align-middle ${rowClass}`}> 
+            
+            {hasItems && (
+                <td className={`text-center align-middle fw-bold text-success ${cellBorderClass}`} style={{ width: '75px', maxWidth: '75px' }}>
+                    +
+                </td>
+            )}
+
+            <td className={`align-middle p-2 ${cellBorderClass}`} colSpan={nameCellColSpan}>
+                {renderFormControl('name', 'שם המוצר (פריט חדש)', true)}
+            </td>
+
+            <td className={`align-middle p-2 ${cellBorderClass}`}>
+                {renderFormControl('description', 'תיאור/כמות (אופציונלי)', false)}
+            </td>
+
+            <td className={`text-center align-middle p-2 ${cellBorderClass}`} style={{ width: '150px' }}>
+                <Button variant="success" type="button" onClick={handleAdd} className="w-100">
+                    הוסף
+                </Button>
+            </td>
+        </tr>
     );
 };
 
