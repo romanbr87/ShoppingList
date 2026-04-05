@@ -23,7 +23,9 @@ const TableBody = ({ items, setList, onDelete, handleDragStart, handleDragEnter,
 
     const handleSaveClick = (id) => {
         const item = items.find(i => i.id === id);
-        if (!item.name.trim()) {
+
+        // Validation only happens upon clicking 'Save'
+        if (!item.name || !item.name.trim()) {
             alert("שם המוצר לא יכול להיות ריק.");
             return;
         }
@@ -45,7 +47,6 @@ const TableBody = ({ items, setList, onDelete, handleDragStart, handleDragEnter,
         setOriginalItem(null);
     };
 
-    // Universal handler for item changes (works for both modes)
     const handleItemChange = (id, field, value) => {
         setList(prevList => {
             const currentItem = prevList.find(item => item.id === id);
@@ -53,30 +54,26 @@ const TableBody = ({ items, setList, onDelete, handleDragStart, handleDragEnter,
 
             const updatedItem = { ...currentItem, [field]: value };
 
-            // Prevent empty name
-            if (field === 'name' && !value.trim()) {
-                alert("שם המוצר לא יכול להיות ריק.");
-                return prevList;
-            }
-
-            // Check for duplicate against the rest of the list 
-            if (isDuplicate(prevList, updatedItem, id)) {
-                alert("הפריט הקיים כבר ברשימה עם אותו שם ותיאור. לא ניתן לשמור כפילות.");
-                return prevList;
-            }
-
-            // Update the list if no duplicate is found
             return prevList.map(item =>
                 item.id === id ? updatedItem : item
             );
         });
     };
 
+    // New handler for deletion with confirmation
+    const confirmDelete = (item) => {
+        const descriptionSnippet = item.description ? ` (${item.description})` : "";
+        const message = `האם אתה בטוח שברצונך למחוק את "${item.name}"${descriptionSnippet}?`;
+        
+        if (window.confirm(message)) {
+            onDelete(item.id);
+        }
+    };
+
     return (
         <React.Fragment>
             {items.map((item, index) => {
-                const isItemEditing = !isEditing && editingItemId === item.id;
-                const showFormControls = isEditing || isItemEditing;
+                const showFormControls = isEditing || editingItemId === item.id;
 
                 return (
                     <tr
@@ -86,7 +83,7 @@ const TableBody = ({ items, setList, onDelete, handleDragStart, handleDragEnter,
                         onDragEnter={(e) => handleDragEnter(e, index)}
                         onDrop={handleDrop}
                         onDragOver={(e) => e.preventDefault()}
-                        onDoubleClick={!isEditing && !isItemEditing ? () => handleDoubleClick(item.id) : undefined}
+                        onDoubleClick={!showFormControls ? () => handleDoubleClick(item.id) : undefined}
                         style={{
                             cursor: 'grab',
                             textDecoration: !isEditing && checkedItems[item.id] ? 'line-through' : 'none',
@@ -95,59 +92,56 @@ const TableBody = ({ items, setList, onDelete, handleDragStart, handleDragEnter,
                     >
                         <td className="text-center align-middle" style={{ width: '5%' }}>{index + 1}</td>
                         
-                        {/* Name field */}
                         {showFormControls ? (
-                            <td className="align-middle" style={{ width: '20%' }}>
-                                <Form.Control
-                                    type="text"
-                                    value={item.name}
-                                    onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
-                                    required
-                                />
-                            </td>
+                            <React.Fragment>
+                                <td className="align-middle" style={{ width: '20%' }}>
+                                    <Form.Control
+                                        type="text"
+                                        value={item.name}
+                                        onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
+                                        required 
+                                    />
+                                </td>
+                                <td className="align-middle" style={{ width: '40%' }}>
+                                    <Form.Control
+                                        type="text"
+                                        value={item.description}
+                                        onChange={(e) => handleItemChange(item.id, 'description', e.target.value)}
+                                    />
+                                </td>
+                            </React.Fragment>
                         ) : (
-                            <td className="align-middle" style={{ width: '20%' }} title={item.name}>
-                                {item.name}
-                            </td>
+                            <React.Fragment>
+                                <td className="align-middle" style={{ width: '20%' }} title={item.name}>
+                                    {item.name}
+                                </td>
+                                <td className="align-middle" style={{ width: '40%' }} title={item.description}>
+                                    {item.description}
+                                </td>
+                            </React.Fragment>
                         )}
 
-                        {/* Description field */}
-                        {showFormControls ? (
-                            <td className="align-middle" style={{ width: '40%' }}>
-                                <Form.Control
-                                    type="text"
-                                    value={item.description}
-                                    onChange={(e) => handleItemChange(item.id, 'description', e.target.value)}
-                                />
-                            </td>
-                        ) : (
-                            <td className="align-middle" style={{ width: '40%' }} title={item.description}>
-                                {item.description}
-                            </td>
-                        )}
-
-                        {/* Actions */}
                         <td className="text-center align-middle" style={{ width: '15%' }}>
                             {isEditing ? (
-                                <Button variant="danger" size="sm" onClick={() => onDelete(item.id)}>
+                                <Button variant="danger" size="sm" onClick={() => confirmDelete(item)}>
                                     <BsTrashFill />
                                 </Button>
                             ) : (
                                 <div className="d-flex justify-content-center gap-2">
-                                    {isItemEditing ? (
+                                    {editingItemId === item.id ? (
                                         <>
                                             <Button 
                                                 variant="success" 
                                                 size="sm" 
                                                 onClick={() => handleSaveClick(item.id)} 
-                                                disabled={checkedItems[item.id] || !item.name.trim()}
+                                                disabled={checkedItems[item.id]}
                                             >
                                                 <BsCheckLg />
                                             </Button>
                                             <Button 
                                                 variant="secondary" 
                                                 size="sm" 
-                                                onClick={() => handleCancelClick(item)} 
+                                                onClick={() => handleCancelClick()} 
                                                 disabled={checkedItems[item.id]}
                                             >
                                                 <BsXLg />
@@ -166,7 +160,7 @@ const TableBody = ({ items, setList, onDelete, handleDragStart, handleDragEnter,
                                             <Button 
                                                 variant="danger" 
                                                 size="sm" 
-                                                onClick={() => onDelete(item.id)} 
+                                                onClick={() => confirmDelete(item)} 
                                                 disabled={checkedItems[item.id]}
                                             >
                                                 <BsTrashFill />
