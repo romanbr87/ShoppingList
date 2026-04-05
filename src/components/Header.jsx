@@ -1,7 +1,9 @@
 // components/Header.js
 import { useState, useRef } from 'react'; 
-import { Navbar, Nav, Container, Modal, Button } from 'react-bootstrap';
+import { Navbar, Nav, Container } from 'react-bootstrap';
 import Link from 'next/link';
+// New Import
+import AboutModal from './AboutModal'; 
 
 const Header = () => {
     const [showAboutModal, setShowAboutModal] = useState(false);
@@ -47,30 +49,7 @@ const Header = () => {
                 </Navbar.Collapse>
             </Container>
 
-            <Modal show={showAboutModal} onHide={handleClose} centered dir="rtl">
-                <Modal.Header closeButton>
-                    <Modal.Title>אודות האפליקציה</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <p>
-                        אפליקציה זו פותחה כפרויקט אישי, המאפשר לנהל רשימות קניות בצורה פשוטה ויעילה.
-                    </p>
-                    <ul style={{ listStyleType: 'none', paddingLeft: '0' }}>
-                        <li>- בניית רשימת קניות דיגיטלית</li>
-                        <li>- ייבוא וייצוא רשימות בפורמט JSON</li>
-                        <li>- מיזוג חכם של רשימות קיימות</li>
-                        <li>- שינוי סדר פריטים באמצעות גרירה ושינוי גודל</li>
-                        <li>- סימון פריטים שנקנו בלחיצה כפולה</li>
-                    </ul>
-                    <hr />
-                    <p className="text-muted small">פותח ע"י רומן ברמן</p>
-                </Modal.Body>
-                <Modal.Footer className="d-flex justify-content-start">
-                    <Button variant="secondary" onClick={handleClose}>
-                        סגור
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            <AboutModal show={showAboutModal} handleClose={handleClose} />
         </Navbar>
     );
 };
