@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { Container, Form, Button, Row, Col } from 'react-bootstrap';
 import ShoppingListTable from '../components/ShoppingListTable';
-import ManualAddModal from '../components/ManualAddModal';
+import ManualEditModal from '../components/ManualEditModal';
 import { BsUpload, BsDownload, BsTrash } from 'react-icons/bs';
 import { mergeLists, convertObjectToList } from '../utils/listUtils';
 
@@ -73,7 +73,7 @@ const ShoppingListPage = () => {
             setShoppingList(prevList => [...prevList, {
                 name: newItem.name.trim(),
                 description: newItem.description.trim(),
-                id: Date.now()
+                id: crypto.randomUUID();
             }]);
             setNewItem({ name: '', description: '' });
             setLastFileName(null); // Clear file name when manually adding, as the list is modified
@@ -166,7 +166,7 @@ const ShoppingListPage = () => {
                 handleAdd={handleAdd}
                 isEditing={isEditing}
             />
-            <ManualAddModal show={showModal} handleClose={() => setShowModal(false)} handleAddItems={handleAddManually} />
+            <ManualEditModal show={showModal} handleClose={() => setShowModal(false)} handleAddItems={handleAddManually} />
 
         </Container>
     );

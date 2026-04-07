@@ -32,7 +32,7 @@ export const mergeLists = (existingList, newList) => {
         // Ensure name/description are trimmed and assign a unique ID
         name: item.name.trim(),
         description: item.description ? item.description.trim() : '',
-        id: Date.now() + Math.random(),
+        id: crypto.randomUUID(),
     }));
 
     return [...existingList, ...uniqueNewItems];
@@ -48,6 +48,6 @@ export const convertObjectToList = (obj) => {
     return Object.entries(obj).map(([name, description]) => ({
         name,
         description,
-        id: Date.now() + Math.random(),
+        id: crypto.randomUUID(),
     }));
 };
