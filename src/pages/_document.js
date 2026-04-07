@@ -4,7 +4,7 @@ import Document, { Html, Head, Main, NextScript } from 'next/document';
 class MyDocument extends Document {
   render() {
     return (
-      <Html lang="he" dir="rtl">
+      <Html lang="he" dir="rtl" data-scroll-behavior="smooth">
         <Head>
         </Head>
         <body>
