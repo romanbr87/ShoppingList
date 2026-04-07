@@ -73,7 +73,7 @@ const ShoppingListPage = () => {
             setShoppingList(prevList => [...prevList, {
                 name: newItem.name.trim(),
                 description: newItem.description.trim(),
-                id: crypto.randomUUID();
+                id: crypto.randomUUID(),
             }]);
             setNewItem({ name: '', description: '' });
             setLastFileName(null); // Clear file name when manually adding, as the list is modified
