@@ -12,7 +12,7 @@ const ManualAddModal = ({ show, handleClose, handleAddItems }) => {
             return {
                 name: name || '',
                 description: description || '',
-                id: Date.now() + Math.random(),
+                id: crypto.randomUUID(),
             };
         });
 
