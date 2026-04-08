@@ -7,13 +7,16 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 const App = ({ Component, pageProps }) => {
-    const title = "רשימת קניות - ניהול רשימות קנייה בקלות";
+    const title = "רשימהלי - ניהול רשימות קנייה בקלות";
     const description = "ניהול רשימת קניות פשוט ויעיל. צור, ערוך, ייבא וייצא רשימות קנייה. אפליקציה חינמית וקלה לשימוש לכל מטרה.";
     const imageUrl = "/image.png";
     const websiteUrl = "https://shopping-list-beta-eosin.vercel.app/";
     const authorUrl = "https://www.linkedin.com/in/romanbr87/";
+    const githubUrl = "https://github.com/romanbr87"
+    const facebookUrl = "https://www.facebook.com/ronenbr0/"
+    const instagramUrl = "https://www.instagram.com/ronenbr60/"
     const twitterHandle = "@ronenbr60"; // עדכן לכינוי הטוויטר שלך
-    const keywords = "רשימת קניות, קניות, אפליקציית קניות, רשימת מכולת, ניהול קניות, רשימה דיגיטלית, ייבוא רשימה, ייצוא רשימה, מיזוג רשימות, בחינם, shopping list, list, free app";
+    const keywords = "רשימהלי רשימת קניות, קניות, אפליקציית קניות, רשימת מכולת, ניהול קניות, רשימה דיגיטלית, ייבוא רשימה, ייצוא רשימה, מיזוג רשימות, shopping list, shopping list Hebrew";
 
     return (
         <div className="d-flex flex-column min-vh-100">
@@ -80,32 +83,24 @@ const App = ({ Component, pageProps }) => {
                             "@context": "https://schema.org",
                             "@type": "WebSite",
                             "name": "${title}",
-                            "url": "${websiteUrl}",
-                            "potentialAction": {
-                                "@type": "SearchAction",
-                                "target": {
-                                    "@type": "EntryPoint",
-                                    "urlTemplate": "${websiteUrl}/view?search={search_term_string}"
-                                },
-                                "query-input": "required name=search_term_string"
-                            }
+                            "url": "${websiteUrl}"
                         }
                     `}
                 </script>
                 <script type="application/ld+json">
-                    {`
-                        {
-                            "@context": "https://schema.org",
-                            "@type": "Organization",
-                            "name": "${title}",
-                            "url": "${websiteUrl}",
-                            "sameAs": [
-                                "${authorUrl}",
-                                "https://github.com/romanbr87",
-                                "${twitterHandle ? `https://twitter.com/${twitterHandle.replace('@', '')}` : ''}"
-                            ]
-                        }
-                    `}
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "Person",
+                        "name": title,
+                        "url": websiteUrl,
+                        "sameAs": [
+                            authorUrl,
+                            githubUrl,
+                            facebookUrl,
+                            instagramUrl,
+                            twitterHandle ? `https://twitter.com/${twitterHandle.replace('@', '')}` : ''
+                        ].filter(url => Boolean(url) && url.trim() !== "")
+                    })}
                 </script>
             </Head>
             <Header />
