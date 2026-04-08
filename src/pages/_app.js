@@ -48,7 +48,7 @@ const App = ({ Component, pageProps }) => {
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content={websiteUrl} />
                 <meta property="og:image" content={websiteUrl + imageUrl} />
-                <meta property="og:site_name" content={title} />
+                <meta property="og:site_name" content="רשימהלי" />
                 <meta property="og:locale" content="he_IL" />
                 <meta property="og:image:alt" content="איור של רשימת קניות" />
                 <meta property="og:image:width" content="1024" />
