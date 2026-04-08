@@ -15,7 +15,7 @@ const Home = () => {
                         או למצב צפייה כדי להציג את הרשימה הנוכחית.
                     </p>
                     <hr className="my-4" />
-                    <Button as={Link} href="/shoppinglistapp" variant="primary" size="lg">
+                    <Button as={Link} href="/ShoppingListPage" variant="primary" size="lg">
                         התחל עכשיו
                     </Button>
                 </div>

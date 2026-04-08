@@ -29,7 +29,7 @@ const Header = () => {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav" ref={collapseRef}> 
                     <Nav className="me-auto">
-                        <Nav.Link as={Link} href="/shoppinglistapp" onClick={closeMenu}>
+                        <Nav.Link as={Link} href="/ShoppingListPage" onClick={closeMenu}>
                             ניהול רשימה 📝
                         </Nav.Link>
                         <Nav.Link onClick={() => { handleShow(); closeMenu(); }}>
