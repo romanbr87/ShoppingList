@@ -3,9 +3,9 @@
   "name": "רשימהלי - ניהול רשימות קנייה בקלות",
   "icons": [
     {
-      "src": "/icon.jpeg",
+      "src": "/icon.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any"
     }
   ],

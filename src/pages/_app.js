@@ -9,7 +9,7 @@ import Footer from '../components/Footer';
 const App = ({ Component, pageProps }) => {
     const title = "רשימהלי - ניהול רשימות קנייה בקלות";
     const description = "ניהול רשימת קניות פשוט ויעיל. צור, ערוך, ייבא וייצא רשימות קנייה. אפליקציה חינמית וקלה לשימוש לכל מטרה.";
-    const imageUrl = "image.png";
+    const imageUrl = "image.jpeg";
     const iconUrl = "icon.png"
     const websiteUrl = "https://shopping-list-beta-eosin.vercel.app/";
     const authorUrl = "https://www.linkedin.com/in/romanbr87/";
@@ -53,7 +53,7 @@ const App = ({ Component, pageProps }) => {
                 <meta property="og:image:alt" content="איור של רשימת קניות" />
                 <meta property="og:image:width" content="1024" />
                 <meta property="og:image:height" content="572" />
-                <meta property="og:image:type" content="image/png" />
+                <meta property="og:image:type" content="image/jpeg" />
 
                 {/* Twitter Card Tags */}
                 <meta name="twitter:card" content="summary_large_image" />
