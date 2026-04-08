@@ -20,7 +20,7 @@
     "axios": "^1.12.2",
     "bootstrap": "^5.3.8",
     "lodash": "^4.17.21",
-    "next": "15.4.5",
+    "next": "15.4.10",
     "nodemailer": "^7.0.9",
     "react": "^19.2.0",
     "react-bootstrap": "^2.10.10",
