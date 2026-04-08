@@ -9,10 +9,11 @@ import Footer from '../components/Footer';
 const App = ({ Component, pageProps }) => {
     const title = "רשימהלי - ניהול רשימות קנייה בקלות";
     const description = "ניהול רשימת קניות פשוט ויעיל. צור, ערוך, ייבא וייצא רשימות קנייה. אפליקציה חינמית וקלה לשימוש לכל מטרה.";
-    const imageUrl = "/image.png";
+    const imageUrl = "image.png";
+    const iconUrl = "icon.png"
     const websiteUrl = "https://shopping-list-beta-eosin.vercel.app/";
     const authorUrl = "https://www.linkedin.com/in/romanbr87/";
-    const githubUrl = "https://github.com/romanbr87"
+    const githubUrl = "https://github.com/romanbr87/"
     const facebookUrl = "https://www.facebook.com/ronenbr0/"
     const instagramUrl = "https://www.instagram.com/ronenbr60/"
     const twitterHandle = "@ronenbr60"; // עדכן לכינוי הטוויטר שלך
@@ -50,8 +51,8 @@ const App = ({ Component, pageProps }) => {
                 <meta property="og:site_name" content={title} />
                 <meta property="og:locale" content="he_IL" />
                 <meta property="og:image:alt" content="איור של רשימת קניות" />
-                <meta property="og:image:width" content="1200" />
-                <meta property="og:image:height" content="630" />
+                <meta property="og:image:width" content="1024" />
+                <meta property="og:image:height" content="572" />
                 <meta property="og:image:type" content="image/png" />
 
                 {/* Twitter Card Tags */}
@@ -68,13 +69,12 @@ const App = ({ Component, pageProps }) => {
                 <meta name="apple-mobile-web-app-capable" content="yes" />
                 <meta name="theme-color" content="#FFFFFF" />
                 <link rel="manifest" href="/manifest.json" />
-                <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
                 {/* Icons & Favicons */}
-                <link rel="icon" href="/favicon.ico" />
-                <link rel="shortcut icon" href="/favicon.ico" />
-                <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-                <link id="favicon" rel="shortcut icon" href={websiteUrl + imageUrl} />
+                <link rel="icon" type="image/png" sizes="512x512" href="/icon.png" />
+                <link rel="shortcut icon" type="image/png" sizes="512x512" href="/icon.png" />
+                <link rel="apple-touch-icon" type="image/png" sizes="512x512" href="/icon.png" />
+                <link id="favicon" rel="shortcut icon" type="image/png" sizes="512x512" href={websiteUrl + iconUrl} />
 
                 {/* Structured Data (JSON-LD) */}
                 <script type="application/ld+json">
