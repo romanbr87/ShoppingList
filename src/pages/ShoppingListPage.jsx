@@ -85,16 +85,46 @@ const ShoppingListPage = () => {
         setLastFileName(null); // Clear file name when manually deleting
     };
 
-    const handleDownload = () => {
-        const fileName = "shopping_list.json";
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(shoppingList, null, 2));
-        const downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", fileName);
-        document.body.appendChild(downloadAnchorNode);
-        downloadAnchorNode.click();
-        downloadAnchorNode.remove();
-        setLastFileName(fileName); // Set file name when downloaded
+    const handleDownload = async () => {
+        // 1. Prepare the data
+        const currentName = lastFileName?.trim() || "shopping-list.json";
+
+        const formattedData = shoppingList.map(({ name, description }) => ({
+            name,
+            description
+        }));
+
+        const jsonString = JSON.stringify(formattedData, null, 2);
+
+        try {
+            // 2. Open the native "Save As" picker
+            const fileHandle = await window.showSaveFilePicker({
+                suggestedName: currentName,
+                types: [{
+                    description: 'JSON Files',
+                    accept: { 'application/json': ['.json'] },
+                }],
+            });
+
+            // 3. Create a writable stream and save the data
+            const writableStream = await fileHandle.createWritable();
+            await writableStream.write(jsonString);
+            await writableStream.close();
+
+            // 4. Update state and feedback
+            setLastFileName(fileHandle.name);
+
+            // Using a console log instead of alert to keep it non-blocking
+            console.log(`File saved as: ${fileHandle.name}`);
+
+        } catch (error) {
+            // Handle user cancellation or errors
+            if (error.name === 'AbortError') {
+                console.log('User cancelled the save operation.');
+            } else {
+                console.error('Error saving file:', error);
+            }
+        }
     };
 
     const handleClearList = () => { // New function to clear the list
@@ -116,9 +146,12 @@ const ShoppingListPage = () => {
                 <div>
                     <h2 className="mb-0 text-primary">{isEditing ? 'מצב עריכה' : 'רשימת קניות'}</h2>
                     <h5 className="mb-2 text-muted">סה"כ פריטים: {shoppingList.length} 🛒</h5>
-                    {lastFileName && ( // Display file name if available
+                    {lastFileName && (
                         <p className="text-secondary small mb-0">
-                            קובץ אחרון: <strong>{lastFileName}</strong>
+                            קובץ אחרון:
+                            <strong className="d-inline-block me-1">
+                                {'\u200E'}{lastFileName}{'\u200E'}
+                            </strong>
                         </p>
                     )}
                 </div>
@@ -153,8 +186,23 @@ const ShoppingListPage = () => {
                         </Button>
                     )}
                 </div>
-                <Form.Control type="file" ref={importFileRef} onChange={(e) => handleFileChange(e, 'import')} accept=".json" style={{ display: 'none' }} />
-                <Form.Control type="file" ref={mergeFileRef} onChange={(e) => handleFileChange(e, 'merge')} accept=".json" style={{ display: 'none' }} />
+
+                <Form.Control
+                    type="file"
+                    ref={importFileRef}
+                    onChange={(e) => handleFileChange(e, 'import')}
+                    accept="application/json" // Strict MIME type
+                    style={{ display: 'none' }}
+                />
+
+                <Form.Control
+                    type="file"
+                    ref={mergeFileRef}
+                    onChange={(e) => handleFileChange(e, 'merge')}
+                    accept="application/json" // Strict MIME type
+                    style={{ display: 'none' }}
+                />
+
             </div>
 
             <ShoppingListTable
