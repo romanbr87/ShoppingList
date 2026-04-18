@@ -51,3 +51,23 @@ export const convertObjectToList = (obj) => {
         id: crypto.randomUUID(),
     }));
 };
+
+export const isValidItemArray = (data) => {
+  if (!Array.isArray(data)) return false;
+
+  return data.every(item => {
+    if (item === null || typeof item !== 'object' || Array.isArray(item)) {
+      return false;
+    }
+
+    const keys = Object.keys(item);
+    // ⚠️ This fails if your JSON has an "id" or any other field
+    return (
+      keys.length === 2 && 
+      typeof item.name === 'string' &&
+      typeof item.description === 'string' &&
+      keys.includes('name') &&
+      keys.includes('description')
+    );
+  });
+};
