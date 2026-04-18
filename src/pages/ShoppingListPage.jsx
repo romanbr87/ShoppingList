@@ -3,7 +3,7 @@ import { Container, Form, Button, Row, Col } from 'react-bootstrap';
 import ShoppingListTable from '../components/ShoppingListTable';
 import ManualEditModal from '../components/ManualEditModal';
 import { BsUpload, BsDownload, BsTrash } from 'react-icons/bs';
-import { mergeLists, convertObjectToList } from '../utils/listUtils';
+import { mergeLists, convertObjectToList, isValidItemArray } from '../utils/listUtils';
 
 const ShoppingListPage = () => {
     const [shoppingList, setShoppingList] = useState([]);
@@ -33,10 +33,14 @@ const ShoppingListPage = () => {
             reader.onload = (e) => {
                 try {
                     let parsedData = JSON.parse(e.target.result);
+
+                    // If it's a single object, convert it to a list first
                     if (!Array.isArray(parsedData) && typeof parsedData === 'object' && parsedData !== null) {
                         parsedData = convertObjectToList(parsedData);
                     }
-                    if (!Array.isArray(parsedData)) {
+
+                    // Now use the function to check if the result is a valid array of items
+                    if (!isValidItemArray(parsedData)) {
                         alert("קובץ JSON לא תקין. אנא נסה שוב.");
                         return;
                     }
@@ -48,9 +52,10 @@ const ShoppingListPage = () => {
                         setLastFileName(fileName); // Set file name on successful import
                     } else if (type === 'merge') {
                         setShoppingList(prevList => mergeLists(prevList, uniqueImportedData));
-                        setLastFileName(prevName => (prevName ? `${prevName} + ${fileName}` : fileName)); // Update file name for merge
+                        if (!lastFileName) setLastFileName(newName => fileName);
                     }
                 } catch (error) {
+                    console.error("Import error:", error);
                     alert("קובץ JSON לא תקין. אנא נסה שוב.");
                 }
             };
