@@ -19,7 +19,7 @@ export const mergeLists = (existingList, newList) => {
 
     const uniqueNewItems = newList.filter(newItem => {
         const newItemKey = normalizeKey(newItem);
-        
+
         // Skip items with no name or items that are duplicates
         if (newItemKey === null || existingKeys.has(newItemKey)) {
             return false;
@@ -53,21 +53,31 @@ export const convertObjectToList = (obj) => {
 };
 
 export const isValidItemArray = (data) => {
-  if (!Array.isArray(data)) return false;
+    // Check if it's an array and NOT empty
+    if (!Array.isArray(data) || data.length === 0) return false;
 
-  return data.every(item => {
-    if (item === null || typeof item !== 'object' || Array.isArray(item)) {
-      return false;
-    }
+    return data.every(item => {
+        if (item === null || typeof item !== 'object' || Array.isArray(item)) {
+            return false;
+        }
 
-    const keys = Object.keys(item);
-    // ⚠️ This fails if your JSON has an "id" or any other field
-    return (
-      keys.length === 2 && 
-      typeof item.name === 'string' &&
-      typeof item.description === 'string' &&
-      keys.includes('name') &&
-      keys.includes('description')
+        const keys = Object.keys(item);
+        
+        return (
+            keys.length === 2 &&
+            typeof item.name === 'string' &&
+            typeof item.description === 'string' &&
+            keys.includes('name') &&
+            keys.includes('description')
+        );
+    });
+};
+
+export const isDuplicate = (list, item) => {
+    if (!item.name.trim()) return true;
+
+    return list.some(existingItem => 
+        existingItem.name === item.name && 
+        existingItem.description === item.description
     );
-  });
 };
