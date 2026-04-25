@@ -59,22 +59,34 @@ const ShoppingListPage = () => {
 
     const handleAdd = (e) => {
         e.preventDefault();
-        if (newItem.name.trim()) {
-            if (isDuplicate(shoppingList, newItem)) {
-                alert(`הפריט "${newItem.name.trim()}" עם התיאור "${newItem.description.trim()}" כבר קיים ברשימה.`);
+
+        // Create trimmed versions first
+        const trimmedName = newItem.name.trim();
+        const trimmedDescription = newItem.description.trim();
+
+        if (trimmedName) {
+            // Create a temporary object to check against the list
+            const itemToCheck = {
+                name: trimmedName,
+                description: trimmedDescription
+            };
+
+            if (isDuplicate(shoppingList, itemToCheck)) {
+                alert(`הפריט "${trimmedName}" עם התיאור "${trimmedDescription}" כבר קיים ברשימה.`);
                 return;
             }
 
             setShoppingList(prevList => [...prevList, {
-                name: newItem.name.trim(),
-                description: newItem.description.trim(),
+                name: trimmedName,
+                description: trimmedDescription,
                 id: crypto.randomUUID(),
             }]);
+
             setNewItem({ name: '', description: '' });
-            setLastFileName(null); // Clear file name when manually adding, as the list is modified
+            setLastFileName(null);
         }
     };
-
+    
     const handleDelete = (id) => {
         setShoppingList(prevList => prevList.filter(item => item.id !== id));
         setLastFileName(null); // Clear file name when manually deleting
