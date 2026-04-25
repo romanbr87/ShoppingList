@@ -3,7 +3,7 @@ import { Container, Form, Button, Row, Col } from 'react-bootstrap';
 import ShoppingListTable from '../components/ShoppingListTable';
 import ManualEditModal from '../components/ManualEditModal';
 import { BsUpload, BsDownload, BsTrash } from 'react-icons/bs';
-import { mergeLists, convertObjectToList, isValidItemArray } from '../utils/listUtils';
+import { mergeLists, convertObjectToList, isValidItemArray, isDuplicate } from '../utils/listUtils';
 
 const ShoppingListPage = () => {
     const [shoppingList, setShoppingList] = useState([]);
@@ -14,16 +14,6 @@ const ShoppingListPage = () => {
     const importFileRef = useRef(null);
     const mergeFileRef = useRef(null);
 
-    const isDuplicate = (list, item) => {
-        if (!item.name.trim()) return true;
-
-        const newItemKey = `${item.name.trim().toLowerCase()}-${item.description.trim().toLowerCase()}`;
-
-        return list.some(existingItem => {
-            const existingKey = `${existingItem.name.trim().toLowerCase()}-${existingItem.description.trim().toLowerCase()}`;
-            return existingKey === newItemKey;
-        });
-    };
 
     const handleFileChange = (event, type) => {
         const file = event.target.files[0];
