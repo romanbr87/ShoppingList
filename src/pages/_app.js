@@ -1,6 +1,7 @@
 // pages/_app.js
 import Head from 'next/head';
 import '@/styles/style.css'
+import '@/styles/globals.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Header from '../components/Header';
@@ -17,7 +18,7 @@ const App = ({ Component, pageProps }) => {
     const facebookUrl = "https://www.facebook.com/ronenbr0/"
     const instagramUrl = "https://www.instagram.com/ronenbr60/"
     const twitterHandle = "@ronenbr60"; // עדכן לכינוי הטוויטר שלך
-    const keywords = "רשימהלי רשימת קניות, קניות, אפליקציית קניות, רשימת מכולת, ניהול קניות, רשימה דיגיטלית, ייבוא רשימה, ייצוא רשימה, מיזוג רשימות, shopping list, shopping list Hebrew";
+    const keywords = "רשימהלי, רשימת קניות, קניות, אפליקציית קניות, רשימת מכולת, ניהול קניות, רשימת קניות דיגיטלית, רשימה דיגיטלית, ייבוא רשימה, ייצוא רשימה, מיזוג רשימות, shopping list, shopping list Hebrew";
 
     return (
         <div className="d-flex flex-column min-vh-100">
