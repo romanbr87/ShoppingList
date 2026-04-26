@@ -2,12 +2,12 @@
   "name": "shoppinglist",
   "version": "0.1.0",
   "private": true,
-  "description": "Shopping list website.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "biome check",
+    "format": "biome format --write"
   },
   "dependencies": {
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
@@ -15,18 +15,22 @@
     "@fortawesome/react-fontawesome": "^0.2.6",
     "bootstrap": "^5.3.8",
     "lodash": "^4.18.1",
-    "next": "^16.2.4",
-    "react": "^19.2.5",
+    "next": "16.2.4",
+    "react": "19.2.5",
     "react-bootstrap": "^2.10.10",
     "react-bootstrap-typeahead": "^6.4.1",
     "react-device-detect": "^2.2.3",
-    "react-dom": "^19.2.5",
+    "react-dom": "19.2.5",
     "react-icons": "^5.6.0",
     "react-notifications": "^1.7.4",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.14.2",
     "styled-components": "^6.4.1",
     "yup": "^1.7.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.2.0",
+    "babel-plugin-react-compiler": "1.0.0"
   },
   "repository": {
     "type": "git",
@@ -42,5 +46,6 @@
     "רשימהלי"
   ],
   "homepage": "https://github.com/romanbr87/ShoppingList#readme",
-  "author": "Roman Braverman"
+  "author": "Roman Braverman",
+  "description": "Shopping list website."
 }
