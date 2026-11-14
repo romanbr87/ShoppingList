@@ -12,7 +12,7 @@ const App = ({ Component, pageProps }) => {
     const description = "ניהול רשימת קניות פשוט ויעיל. צור, ערוך, ייבא וייצא רשימות קנייה. אפליקציה חינמית וקלה לשימוש לכל מטרה.";
     const imageUrl = "image.jpeg";
     const iconUrl = "icon.png"
-    const websiteUrl = "https://shopping-list-beta-eosin.vercel.app/";
+    const websiteUrl = "https://shopping-list1.vercel.app/";
     const authorUrl = "https://www.linkedin.com/in/romanbr87/";
     const githubUrl = "https://github.com/romanbr87/"
     const facebookUrl = "https://www.facebook.com/ronenbr0/"
@@ -20,6 +20,26 @@ const App = ({ Component, pageProps }) => {
     const twitterHandle = "@ronenbr60"; // עדכן לכינוי הטוויטר שלך
     const keywords = "רשימהלי, רשימת קניות, קניות, אפליקציית קניות, רשימת מכולת, ניהול קניות, רשימת קניות דיגיטלית, רשימה דיגיטלית, ייבוא רשימה, ייצוא רשימה, מיזוג רשימות, shopping list, shopping list Hebrew";
 
+    const websiteSchema = {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": title,
+        "url": websiteUrl,
+    };
+
+    const personSchema = {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": title,
+        "url": websiteUrl,
+        "sameAs": [
+            authorUrl,
+            githubUrl,
+            facebookUrl,
+            instagramUrl,
+            twitterHandle ? `https://twitter.com/${twitterHandle.replace('@', '')}` : null
+        ].filter(Boolean) // Efficiently removes null/undefined/empty strings
+    };
     return (
         <div className="d-flex flex-column min-vh-100">
             <Head>
@@ -78,38 +98,21 @@ const App = ({ Component, pageProps }) => {
                 <link id="favicon" rel="shortcut icon" type="image/png" sizes="512x512" href={websiteUrl + iconUrl} />
 
                 {/* Structured Data (JSON-LD) */}
-                <script type="application/ld+json">
-                    {`
-                        {
-                            "@context": "https://schema.org",
-                            "@type": "WebSite",
-                            "name": "${title}",
-                            "url": "${websiteUrl}"
-                        }
-                    `}
-                </script>
-                <script type="application/ld+json">
-                    {JSON.stringify({
-                        "@context": "https://schema.org",
-                        "@type": "Person",
-                        "name": title,
-                        "url": websiteUrl,
-                        "sameAs": [
-                            authorUrl,
-                            githubUrl,
-                            facebookUrl,
-                            instagramUrl,
-                            twitterHandle ? `https://twitter.com/${twitterHandle.replace('@', '')}` : ''
-                        ].filter(url => Boolean(url) && url.trim() !== "")
-                    })}
-                </script>
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+                />
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+                />
             </Head>
             <Header />
             <main className="flex-grow-1">
                 <Component {...pageProps} />
             </main>
             <Footer />
-        </div>
+        </div >
     );
 };
 
