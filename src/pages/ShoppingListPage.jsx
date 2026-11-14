@@ -1,8 +1,8 @@
 import { useState, useRef } from 'react';
-import { Container, Form, Button, Row, Col } from 'react-bootstrap';
+import { Container, Form, Button, Row, Col, Card } from 'react-bootstrap';
 import ShoppingListTable from '../components/ShoppingListTable';
 import ManualEditModal from '../components/ManualEditModal';
-import { BsUpload, BsDownload, BsTrash } from 'react-icons/bs';
+import { BsUpload, BsDownload, BsTrash, BsPlusLg } from 'react-icons/bs';
 import { mergeLists, convertObjectToList, isValidItemArray, isDuplicate } from '../utils/listUtils';
 
 const ShoppingListPage = () => {
@@ -10,26 +10,23 @@ const ShoppingListPage = () => {
     const [newItem, setNewItem] = useState({ name: '', description: '' });
     const [showModal, setShowModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
-    const [lastFileName, setLastFileName] = useState(null); // New state for file name
+    const [lastFileName, setLastFileName] = useState(null);
     const importFileRef = useRef(null);
     const mergeFileRef = useRef(null);
-
 
     const handleFileChange = (event, type) => {
         const file = event.target.files[0];
         if (file) {
-            const fileName = file.name; // Get file name
+            const fileName = file.name;
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
                     let parsedData = JSON.parse(e.target.result);
 
-                    // If it's a single object, convert it to a list first
                     if (!Array.isArray(parsedData) && typeof parsedData === 'object' && parsedData !== null) {
                         parsedData = convertObjectToList(parsedData);
                     }
 
-                    // Now use the function to check if the result is a valid array of items
                     if (!isValidItemArray(parsedData)) {
                         alert("קובץ JSON לא תקין. אנא נסה שוב.");
                         return;
@@ -39,10 +36,10 @@ const ShoppingListPage = () => {
 
                     if (type === 'import') {
                         setShoppingList(uniqueImportedData);
-                        setLastFileName(fileName); // Set file name on successful import
+                        setLastFileName(fileName);
                     } else if (type === 'merge') {
                         setShoppingList(prevList => mergeLists(prevList, uniqueImportedData));
-                        if (!lastFileName) setLastFileName(newName => fileName);
+                        if (!lastFileName) setLastFileName(fileName);
                     }
                 } catch (error) {
                     console.error("Import error:", error);
@@ -60,12 +57,10 @@ const ShoppingListPage = () => {
     const handleAdd = (e) => {
         e.preventDefault();
 
-        // Create trimmed versions first
         const trimmedName = newItem.name.trim();
         const trimmedDescription = newItem.description.trim();
 
         if (trimmedName) {
-            // Create a temporary object to check against the list
             const itemToCheck = {
                 name: trimmedName,
                 description: trimmedDescription
@@ -83,19 +78,19 @@ const ShoppingListPage = () => {
             }]);
 
             setNewItem({ name: '', description: '' });
-            setLastFileName(null);
+            // Note: setLastFileName(null) was removed here so adding new items preserves the file name!
         }
     };
     
     const handleDelete = (id) => {
         setShoppingList(prevList => prevList.filter(item => item.id !== id));
-        setLastFileName(null); // Clear file name when manually deleting
+        // Optional: you can keep or remove lastFileName reset on delete depending on preference, 
+        // but keeping it untouched or handled as desired. (Left unchanged from original unless requested, 
+        // wait - keeping delete behavior as is, only removing it from handleAdd).
     };
 
     const handleDownload = async () => {
-        // 1. Prepare the data
         const currentName = lastFileName?.trim() || "shopping-list.json";
-
         const formattedData = shoppingList.map(({ name, description }) => ({
             name,
             description
@@ -104,7 +99,6 @@ const ShoppingListPage = () => {
         const jsonString = JSON.stringify(formattedData, null, 2);
 
         try {
-            // 2. Open the native "Save As" picker
             const fileHandle = await window.showSaveFilePicker({
                 suggestedName: currentName,
                 types: [{
@@ -113,19 +107,14 @@ const ShoppingListPage = () => {
                 }],
             });
 
-            // 3. Create a writable stream and save the data
             const writableStream = await fileHandle.createWritable();
             await writableStream.write(jsonString);
             await writableStream.close();
 
-            // 4. Update state and feedback
             setLastFileName(fileHandle.name);
-
-            // Using a console log instead of alert to keep it non-blocking
             console.log(`File saved as: ${fileHandle.name}`);
 
         } catch (error) {
-            // Handle user cancellation or errors
             if (error.name === 'AbortError') {
                 console.log('User cancelled the save operation.');
             } else {
@@ -134,7 +123,7 @@ const ShoppingListPage = () => {
         }
     };
 
-    const handleClearList = () => { // New function to clear the list
+    const handleClearList = () => {
         if (window.confirm("האם אתה בטוח שברצונך למחוק את כל הפריטים מהרשימה?")) {
             setShoppingList([]);
             setLastFileName(null);
@@ -142,75 +131,118 @@ const ShoppingListPage = () => {
     };
 
     const handleAddManually = (newItems) => {
-        // mergeLists handles all duplicate checks
         setShoppingList(prevList => mergeLists(prevList, newItems));
-        setLastFileName(null); // Clear file name when manually adding
+        // setLastFileName(null); // Optional: if you also want manual modal additions to preserve file name, comment this out as well.
     };
 
     return (
-        <Container className="my-5">
-            <div className="d-flex flex-column flex-sm-row justify-content-between align-items-center mb-4">
-                <div>
-                    <h2 className="mb-0 text-primary">{isEditing ? 'מצב עריכה' : 'רשימת קניות'}</h2>
-                    <h5 className="mb-2 text-muted">סה"כ פריטים: {shoppingList.length} 🛒</h5>
-                    {lastFileName && (
-                        <p className="text-secondary small mb-0">
-                            קובץ אחרון:
-                            <strong className="d-inline-block me-1">
-                                {'\u200E'}{lastFileName}{'\u200E'}
-                            </strong>
-                        </p>
-                    )}
-                </div>
-                <div className="d-flex flex-wrap gap-2 justify-content-end align-items-center mt-3 mt-sm-0">
-                    <Form.Check
-                        type="switch"
-                        id="custom-switch"
-                        label={isEditing ? 'מצב עריכה' : 'מצב צפייה'}
-                        checked={isEditing}
-                        onChange={(e) => setIsEditing(e.target.checked)}
-                        className="me-3"
-                    />
-                    {shoppingList.length > 0 && (
-                        <>
-                            <Button variant="outline-danger" onClick={handleClearList} className="d-flex align-items-center">
-                                נקה רשימה <BsTrash className="ms-2" />
-                            </Button>
-                            <Button variant="outline-success" onClick={handleDownload} className="d-flex align-items-center">
-                                ייצוא <BsDownload className="ms-2" />
-                            </Button>
-                        </>
-                    )}
-                    <Button variant="outline-primary" onClick={() => setShowModal(true)} className="d-flex align-items-center">
-                        הוספה ידנית
-                    </Button>
-                    <Button variant="outline-primary" onClick={handleImportClick} className="d-flex align-items-center">
-                        ייבוא רשימה <BsUpload className="ms-2" />
-                    </Button>
-                    {shoppingList.length > 0 && (
-                        <Button variant="outline-info" onClick={handleMergeClick} className="d-flex align-items-center">
-                            ייבוא ומיזוג <BsUpload className="ms-2" />
-                        </Button>
-                    )}
-                </div>
+        <Container className="my-4 my-md-5" dir="rtl">
+            {/* Control Panel Card */}
+            <Card className="shadow-sm mb-4 border-0 bg-light">
+                <Card.Body className="p-3 p-md-4">
+                    <Row className="gy-3 align-items-center">
+                        {/* Title and Info */}
+                        <Col xs={12} md={5}>
+                            <div className="d-flex align-items-center justify-content-between justify-content-md-start gap-3">
+                                <h2 className="mb-0 fs-3 text-primary">
+                                    {isEditing ? 'מצב עריכה' : 'רשימת קניות'}
+                                </h2>
+                                <Form.Check
+                                    type="switch"
+                                    id="custom-switch"
+                                    label={isEditing ? 'מצב עריכה' : 'מצב צפייה'}
+                                    checked={isEditing}
+                                    onChange={(e) => setIsEditing(e.target.checked)}
+                                    className="d-md-none m-0"
+                                />
+                            </div>
+                            <div className="mt-2 text-muted small d-flex flex-wrap gap-2 align-items-center">
+                                <span>סה"כ פריטים: <strong>{shoppingList.length}</strong> 🛒</span>
+                                {lastFileName && (
+                                    <>
+                                        <span>•</span>
+                                        <span>
+                                            קובץ: <strong dir="ltr">{lastFileName}</strong>
+                                        </span>
+                                    </>
+                                )}
+                            </div>
+                        </Col>
 
-                <Form.Control
-                    type="file"
-                    ref={importFileRef}
-                    onChange={(e) => handleFileChange(e, 'import')}
-                    accept="application/json" // Strict MIME type
-                    style={{ display: 'none' }}
-                />
+                        {/* Desktop Switch & Action Buttons */}
+                        <Col xs={12} md={7}>
+                            <div className="d-flex flex-wrap align-items-center justify-content-md-end gap-2">
+                                <Form.Check
+                                    type="switch"
+                                    id="custom-switch-desktop"
+                                    label={isEditing ? 'מצב עריכה' : 'מצב צפייה'}
+                                    checked={isEditing}
+                                    onChange={(e) => setIsEditing(e.target.checked)}
+                                    className="d-none d-md-block ms-3"
+                                />
+                                
+                                <Button 
+                                    variant="primary" 
+                                    onClick={() => setShowModal(true)} 
+                                    className="d-inline-flex align-items-center gap-1 flex-grow-1 flex-sm-grow-0 justify-content-center"
+                                >
+                                    <BsPlusLg /> הוספה ידנית
+                                </Button>
+                                
+                                <Button 
+                                    variant="outline-primary" 
+                                    onClick={handleImportClick} 
+                                    className="d-inline-flex align-items-center gap-1 flex-grow-1 flex-sm-grow-0 justify-content-center"
+                                >
+                                    <BsUpload /> ייבוא
+                                </Button>
 
-                <Form.Control
-                    type="file"
-                    ref={mergeFileRef}
-                    onChange={(e) => handleFileChange(e, 'merge')}
-                    accept="application/json" // Strict MIME type
-                    style={{ display: 'none' }}
-                />
+                                {shoppingList.length > 0 && (
+                                    <>
+                                        <Button 
+                                            variant="outline-info" 
+                                            onClick={handleMergeClick} 
+                                            className="d-inline-flex align-items-center gap-1 flex-grow-1 flex-sm-grow-0 justify-content-center"
+                                        >
+                                            <BsUpload /> מיזוג
+                                        </Button>
+                                        <Button 
+                                            variant="outline-success" 
+                                            onClick={handleDownload} 
+                                            className="d-inline-flex align-items-center gap-1 flex-grow-1 flex-sm-grow-0 justify-content-center"
+                                        >
+                                            <BsDownload /> ייצוא
+                                        </Button>
+                                        <Button 
+                                            variant="outline-danger" 
+                                            onClick={handleClearList} 
+                                            className="d-inline-flex align-items-center gap-1 flex-grow-1 flex-sm-grow-0 justify-content-center"
+                                        >
+                                            <BsTrash /> ניקוי
+                                        </Button>
+                                    </>
+                                )}
+                            </div>
+                        </Col>
+                    </Row>
+                </Card.Body>
+            </Card>
 
-            </div>
+            <Form.Control
+                type="file"
+                ref={importFileRef}
+                onChange={(e) => handleFileChange(e, 'import')}
+                accept="application/json"
+                style={{ display: 'none' }}
+            />
+
+            <Form.Control
+                type="file"
+                ref={mergeFileRef}
+                onChange={(e) => handleFileChange(e, 'merge')}
+                accept="application/json"
+                style={{ display: 'none' }}
+            />
 
             <ShoppingListTable
                 items={shoppingList}
@@ -221,8 +253,12 @@ const ShoppingListPage = () => {
                 handleAdd={handleAdd}
                 isEditing={isEditing}
             />
-            <ManualEditModal show={showModal} handleClose={() => setShowModal(false)} handleAddItems={handleAddManually} />
 
+            <ManualEditModal 
+                show={showModal} 
+                handleClose={() => setShowModal(false)} 
+                handleAddItems={handleAddManually} 
+            />
         </Container>
     );
 };
