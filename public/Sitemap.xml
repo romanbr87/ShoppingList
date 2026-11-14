@@ -5,11 +5,11 @@
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 <url>
-  <loc>https://shopping-list-beta-eosin.vercel.app/</loc>
+  <loc>https://shopping-list1.vercel.app/</loc>
   <priority>1.0</priority>
 </url>
 <url>
-  <loc>https://shopping-list-beta-eosin.vercel.app/ShoppingListPage</loc>
+  <loc>https://shopping-list1.vercel.app/ShoppingListPage</loc>
   <priority>1.0</priority>
 </url>
 </urlset>

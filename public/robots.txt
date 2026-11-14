@@ -2,4 +2,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://shopping-list-beta-eosin.vercel.app/Sitemap.xml
+Sitemap: https://shopping-list1.vercel.app/Sitemap.xml
