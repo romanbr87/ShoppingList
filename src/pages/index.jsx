@@ -108,7 +108,8 @@ const Home = () => {
                             </li>
                         </ul>
                     </div>
-                </div>            </Container>
+                </div>
+            </Container>
         </>
     );
 };
