@@ -41,3 +41,10 @@ yarn-error.log*
 next-env.d.ts
 
 #cmd
+install.bat
+newStart.bat
+npmrundev.bat
+Node.js command prompt.lnk
+src/data/
+src/oldFiles/
+src/pages/Json.jsx
