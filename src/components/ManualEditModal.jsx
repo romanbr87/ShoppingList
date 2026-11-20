@@ -1,8 +1,8 @@
-// components/ManualAddModal.jsx
+// components/ManualEditModal.jsx
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 
-const ManualAddModal = ({ show, handleClose, handleAddItems }) => {
+const ManualEditModal = ({ show, handleClose, handleAddItems }) => {
     const [inputValue, setInputValue] = useState('');
 
     const handleSubmit = () => {
@@ -22,25 +22,25 @@ const ManualAddModal = ({ show, handleClose, handleAddItems }) => {
     };
 
     return (
-        <Modal show={show} onHide={handleClose} dir="rtl">
+        <Modal show={show} onHide={handleClose} dir="rtl" centered>
             <Modal.Header closeButton>
-                <Modal.Title>הוספה ידנית</Modal.Title>
+                <Modal.Title className="fs-5">הוספה ידנית</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <p>הכנס מוצרים, אחד בכל שורה, לפי הפורמט: שם_מוצר | תיאור_מוצר</p>
+                <p className="small text-muted">הכנס מוצרים, אחד בכל שורה, לפי הפורמט: שם_מוצר | תיאור_מוצר</p>
                 <Form.Control
                     as="textarea"
-                    rows={10}
+                    rows={8}
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     placeholder="דוגמה:&#10;חלב | 3%&#10;לחם לבן | פרוס&#10;עגבניות | אשכול"
                 />
             </Modal.Body>
-            <Modal.Footer className="d-flex justify-content-between">
-                <Button variant="secondary" onClick={handleClose}>
+            <Modal.Footer className="d-flex gap-2">
+                <Button variant="secondary" onClick={handleClose} className="flex-fill">
                     ביטול
                 </Button>
-                <Button variant="primary" onClick={handleSubmit}>
+                <Button variant="primary" onClick={handleSubmit} className="flex-fill">
                     הוסף מוצרים
                 </Button>
             </Modal.Footer>
@@ -48,4 +48,4 @@ const ManualAddModal = ({ show, handleClose, handleAddItems }) => {
     );
 };
 
-export default ManualAddModal;
+export default ManualEditModal;
